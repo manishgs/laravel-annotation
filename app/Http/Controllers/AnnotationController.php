@@ -15,11 +15,32 @@ class AnnotationController extends Controller
         return view('annotation.index', compact('pdf'));
     }
 
+    public function search($id, Request $request)
+    {
+        $q = $request->get('q');
+
+        $result = Annotation::select('annotations.id', 'annotations.page', 'comments.text')
+        ->join('comments', 'comments.annotation_id', '=', 'annotations.id')
+        ->whereRaw('comments.text LIKE "%'.trim($q).'%"')
+        ->get();
+
+        $ids = [];
+        $data =[];
+        foreach ($result as $row) {
+            if (!in_array($row->id, $ids)) {
+                $ids[]=$row->id;
+                $data[]=$row;
+            }
+        }
+
+        return response()->json(['total' => count($data), 'rows' => $data]);
+    }
+
     /**
       * @param Request $request
       * @return string
       */
-    public function search(Request $request)
+    public function list(Request $request)
     {
         $page =  $request->get('page');
         $pdf_id =  $request->get('pdf_id');
@@ -57,7 +78,7 @@ class AnnotationController extends Controller
             'created_by'   => \Auth::id(),
             'ranges'  => isset($data['ranges']) ? $data['ranges'] : null,
             'shapes'  => isset($data['shapes']) ? $data['shapes'] : null,
-            'quote'  => isset($data['quote']) ? $data['quote'] : null,
+            'quote'  => isset($data['quote']) ? $data['quote'] : '',
             'pdf_id' => $data['pdf_id'],
             'page' => $data['page'],
             'properties' =>$data['properties']
@@ -168,5 +189,11 @@ class AnnotationController extends Controller
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 400);
         }
         return response()->json(['status' => 'error', 'message' => 'Could not find the annotation.'], 400);
+    }
+
+    public function deleteAll($id)
+    {
+        Annotation::where('pdf_id', $id)->delete();
+        return response()->json(['status' => 'OK']);
     }
 }

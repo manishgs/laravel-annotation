@@ -19,7 +19,7 @@ class CreateAnnotationsTable extends Migration
             $table->string('properties');
             $table->string('ranges')->nullable();
             $table->string('shapes')->nullable();
-            $table->string('quote');
+            $table->string('quote')->nullable();
             $table->integer('created_by')->index();
             $table->integer('updated_by')->index()->nullable();
             $table->timestamps();

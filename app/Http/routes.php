@@ -18,10 +18,13 @@ Route::get('/', function () {
 Route::auth();
 
 Route::get('/home', 'HomeController@index');
-Route::get('/annotation', 'AnnotationController@search');
+Route::get('/annotation', 'AnnotationController@list');
+Route::get('/annotation/{id}/search', 'AnnotationController@search');
+Route::delete('/annotation/{id}/deleteAll', 'AnnotationController@deleteAll');
+
+Route::get('/annotation/{id}', 'AnnotationController@index');
 Route::post('/annotation', 'AnnotationController@store');
 Route::put('/annotation/{id}', 'AnnotationController@update');
-Route::get('/annotation/{id}', 'AnnotationController@index');
 Route::delete('/annotation/{id}', 'AnnotationController@delete');
 
 Route::get('/stamp/{pdf}/{page}', 'StampController@index');
