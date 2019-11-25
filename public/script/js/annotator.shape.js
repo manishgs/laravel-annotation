@@ -196,10 +196,12 @@ Annotator.Plugin.Shape = (function (_super) {
 
     Shape.prototype.resizeButtons = function () {
         return '<div class="btn-group annotator-resize-action" role="group">' +
-            '<button title="Save" class="save btn btn-primary"><span class="fa fa-floppy-o"' +
-            ' aria-hidden="true"></span></button> ' +
-            '<button title="Cancel" class="cancel btn btn-danger" ><span class="fa fa-times' +
-            ' aria-hidden="true"></span></button>'
+            '<button title="Save" class="save btn btn-default" style="padding: 1px 5px 3px">' +
+            '<img src="/script/images/save.png" width="15px"/>' +
+            '</button> ' +
+            '<button title="Cancel" class="cancel btn btn-default"  style="padding:1px 5px 3px">' +
+            '<img src="/script/images/cancel.png" width="13px"/>' +
+            '</button>'
         '</div>';
     };
 
