@@ -233,23 +233,8 @@
                             <img src="{{url('script/images/stamp.png')}}" style="height: 16px;" />
                           </button>
                           <div class="findbar doorHanger stamp-collection" id="findbar"
-                            style="display:none; position: absolute; left:0px; min-width: 256px;">
+                            style="display:none; position: absolute; left:0px; min-width: 285px;">
                             <ul class="stamp-list">
-                              <li>
-                                <div class="stamp-item stamp-block stamp-revised" data-type="revised">Revised</div>
-                              </li>
-                              <li>
-                                <div class="stamp-item stamp-block stamp-reviewed" data-type="reviewed">Reviewed</div>
-                              </li>
-                              <li>
-                                <div class="stamp-item stamp-block stamp-received" data-type="received">Received</div>
-                              </li>
-                              <li>
-                                <div class="stamp-item stamp-block stamp-approved" data-type="approved">Approved</div>
-                              </li>
-                              <li>
-                                <div class="stamp-item stamp-block stamp-confidential" data-type="confidential">Confidential</div>
-                              </li>
                             </ul>
                           </div>
                         </div>

@@ -243,9 +243,11 @@
 
  .stamp .stamp-block,
  .stamp-item.ui-draggable-dragging {
-     text-align: left
+     text-align: left;
+     width: 260px;
  }
 
+ .stamp-block,
  .stamp-revised,
  .stamp-reviewed,
  .stamp-received {
@@ -276,6 +278,7 @@
      font-family: initial;
      letter-spacing: 0px;
      font-weight: bold;
+     margin-top:5px;
  }
 
  .annotator-item-controls button {

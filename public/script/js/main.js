@@ -20,6 +20,14 @@ function debounce(func, wait, immediate) {
     };
 }
 
+function loadStampList() {
+    var html = STAMPS.map(function (stamp) {
+        return '<li><div class="stamp-item stamp-block stamp-' + stamp.type + '" data-type="' + stamp.type + '">' + stamp.name + '</div></li>';
+    });
+
+    $('.stamp-list').append(html);
+}
+
 function getStampPositionInPercentage(position, page) {
     var canvas = $('#viewer').find('.page:nth-child(' + page + ')').find('canvas');
     position.top = position.top / canvas.height();
@@ -76,7 +84,6 @@ function loadStamp(page, callback) {
 function renderStamp(shape, draggable) {
     var zoom = PDFViewerApplication.pdfViewer._currentScale;
     var div = $('<div class="stamp"></div>');
-
     draggable.css({ 'zoom': zoom })
     div.css(shape);
     div.html(draggable);
@@ -108,11 +115,15 @@ function stampDraggable(el, data) {
 
 function getDateFormat(timestamp) {
     var date = moment(parseInt(timestamp));
-    return date.format('h:m a, MMM D, Y');
+    return date.format('hh:mm a, MMM D, Y');
 }
 
 
 $(document).on('ready', function () {
+    // load stamp list
+    loadStampList();
+
+    // when click on delete annotation
     Annotator.Viewer.prototype.onDeleteClick = function (event) {
         if (confirm('Do you want to delete this annotation along with comments?')) {
             return this.onButtonClick(event, "delete")
@@ -170,6 +181,29 @@ $(document).on('ready', function () {
     });
 
     // load annotation when pdf text render
+    document.addEventListener('pagerendered', function (event) {
+        const num = event.detail.pageNumber;
+        const content = $('#viewer').find('.page:nth-child(' + num + ')');
+
+        // load stamps for the page
+        loadStamp(num, function (data) {
+            if (data.rows && data.rows.length) {
+                data.rows.forEach(function (v) {
+                    var stamp = $('<div class= "stamp-block stamp-' + v.type + '" data-type="' + v.type + '" > ' + v.type + '</div>');
+                    stamp.append('<span>by ' + v.created_by.name + ' at ' + getDateFormat(v.created_date) + ' </span>')
+                    v.position = getposition(v.position, v.page);
+                    var div = renderStamp({
+                        top: v.position.top + 'px',
+                        left: v.position.left + 'px'
+                    }, stamp);
+                    div.data('stamp', v);
+                    content.prepend(div);
+                    stampDraggable(div, v);
+                });
+            }
+        })
+    });
+
     document.addEventListener('textlayerrendered', function (event) {
         const num = event.detail.pageNumber;
         const content = $('#viewer').find('.page:nth-child(' + num + ')');
@@ -205,24 +239,6 @@ $(document).on('ready', function () {
                 search: '/'
             }
         });
-
-        // load stamps for the page
-        loadStamp(num, function (data) {
-            if (data.rows && data.rows.length) {
-                data.rows.forEach(function (v) {
-                    var stamp = $('<div class= "stamp-block stamp-' + v.type + '" data-type="' + v.type + '" > ' + v.type + '</div>');
-                    stamp.append('<span>by ' + v.created_by.name + ' at ' + getDateFormat(v.created_date) + ' </span>')
-                    v.position = getposition(v.position, v.page);
-                    var div = renderStamp({
-                        top: v.position.top + 'px',
-                        left: v.position.left + 'px'
-                    }, stamp);
-                    div.data('stamp', v);
-                    content.prepend(div);
-                    stampDraggable(div, v);
-                });
-            }
-        })
 
         // make pdf page droppable for stamps
         content.find('.annotator-wrapper').droppable({

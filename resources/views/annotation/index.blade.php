@@ -37,6 +37,13 @@
     var PDF = {!!json_encode($pdf)!!};
     var WORKER_URL = '{{url("script/js/pdf.worker.js")}}';
     var PAGE_TITLE = 'PDF annotations';
+    var STAMPS = [
+    { name :'Revised', type:'revised' },
+    { name :'Reviewed', type:'reviewed' },
+    { name :'Received', type:'received' },
+    { name :'Approved', type:'approved' },
+    { name :'Confidential', type:'confidential' },
+  ];
   </script>
   <script src="{{url('script/js/main.js')}}"></script>
 </head>
