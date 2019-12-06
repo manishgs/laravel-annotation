@@ -8,7 +8,7 @@ class Stamp extends Model
 {
     public $table = 'stamps';
 
-    public $fillable = ['pdf_id' ,'page', 'type','position','created_by','updated_by'];
+    public $fillable = ['pdf_id' ,'page', 'stamp_image_id','position','created_by','updated_by'];
 
     public $casts = [
         'position' => 'json',

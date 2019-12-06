@@ -14,19 +14,15 @@ class StampController extends Controller
      */
     public function index($pdf, $page)
     {
-        $data = Stamp::with('updator', 'creator')->where('pdf_id', $page)->where('page', $page)->get();
+        $data = Stamp::with('creator')->where('pdf_id', $pdf)->where('page', $page)->get();
         $stamps =[];
         foreach ($data as $stamp) {
             $stamp->created_by = ['id'=>$stamp->creator->id, 'name'=>$stamp->creator->name];
-            if ($stamp->updated_by) {
-                $stamp->updated_by = ['id'=>$stamp->updator->id, 'name'=>$stamp->updator->name];
-            }
-            $stamp->updated_date = $stamp->updated_at ? $stamp->updated_at->timestamp . '000' : null;
             $stamp->created_date = $stamp->created_at->timestamp . '000';
             unset($stamp->creator);
-            unset($stamp->updator);
             unset($stamp->created_at);
             unset($stamp->updated_at);
+            unset($stamp->updated_by);
             $stamps[] = $stamp;
         }
 
@@ -48,10 +44,14 @@ class StampController extends Controller
                 'pdf_id'    => $data['pdf_id'],
                 'page' => $data['page'],
                 'position' => $data['position'],
-                'type' => $data['type']
+                'stamp_image_id' => $data['stamp_image_id']
             ];
             $stamp = Stamp::create($stamp);
-            $stamp->created_by = \Auth::user();
+            $stamp->created_by = ['id'=>\Auth::user()->id, 'name'=>\Auth::user()->name];
+            $stamp->created_date = $stamp->created_at->timestamp . '000';
+            unset($stamp->created_at);
+            unset($stamp->updated_at);
+            unset($stamp->updated_by);
             return response()->json($stamp);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 400);
