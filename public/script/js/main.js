@@ -22,10 +22,34 @@ function debounce(func, wait, immediate) {
 
 function loadStampList() {
     var html = STAMPS.map(function (stamp) {
-        return '<li><div class="stamp-item stamp-block stamp-' + stamp.type + '" data-type="' + stamp.type + '">' + stamp.name + '</div></li>';
+        return '<li><div class="stamp-select">' + getStampTemplate(stamp.id, stamp.url) + '</div></li>';
     });
 
     $('.stamp-list').append(html);
+
+    // make stamp draggable
+    $(".stamp-select").draggable({
+        helper: 'clone',
+        cursor: 'move',
+        drag: function (e) {
+            var el = $(e.target).parent().find('.ui-draggable-dragging .stamp-item');
+            $(el).css({ zoom: PDFViewerApplication.pdfViewer._currentScale })
+        },
+    });
+}
+
+function getStampUrlById(id) {
+    var stamps = STAMPS.filter(function (s) {
+        return s.id === id;
+    });
+
+    return stamps.length ? stamps[0].url : '';
+}
+
+function getStampTemplate(id, url) {
+    return '<div class="stamp-item stamp-block stamp-' + id + '" data-stamp="' + id + '">' +
+        '<img src="' + url + '" />' +
+        '</div>';
 }
 
 function getStampPositionInPercentage(position, page) {
@@ -87,7 +111,7 @@ function renderStamp(shape, draggable) {
     draggable.css({ 'zoom': zoom })
     div.css(shape);
     div.html(draggable);
-    var trash = $('<img src="/script/images/trash.svg" class="delete-stamp" />');
+    var trash = $('<div class="delete-stamp"><img src="/script/images/trash.svg" /></div>');
     trash.on('click', function () {
         var stamp = $(this).parent().data('stamp');
         $(this).parent().remove();
@@ -135,11 +159,6 @@ $(document).on('ready', function () {
         $('.stamp-collection').toggle();
     })
 
-    // make stamp draggable
-    $(".stamp-item").draggable({
-        helper: 'clone',
-        cursor: 'move',
-    });
 
     // update worker url and pdf url
     document.addEventListener('load', function () {
@@ -189,7 +208,7 @@ $(document).on('ready', function () {
         loadStamp(num, function (data) {
             if (data.rows && data.rows.length) {
                 data.rows.forEach(function (v) {
-                    var stamp = $('<div class= "stamp-block stamp-' + v.type + '" data-type="' + v.type + '" > ' + v.type + '</div>');
+                    var stamp = $(getStampTemplate(v.stamp_image_id, getStampUrlById(v.stamp_image_id)));
                     stamp.append('<span>by ' + v.created_by.name + ' at ' + getDateFormat(v.created_date) + ' </span>')
                     v.position = getposition(v.position, v.page);
                     var div = renderStamp({
@@ -242,12 +261,12 @@ $(document).on('ready', function () {
 
         // make pdf page droppable for stamps
         content.find('.annotator-wrapper').droppable({
-            accept: '.stamp-item',
+            accept: '.stamp-select',
             activeClass: "drop-area",
             drop: function (e, ui) {
                 var droppable = $(this);
                 var draggable = ui.draggable.clone();
-
+                draggable = draggable.find('.stamp-item');
                 draggable.removeClass('stamp-item').removeClass('ui-draggable').removeClass('ui-draggable-handle');
                 var offset = $('.ui-draggable-dragging').offset();
                 var position = {
@@ -260,7 +279,7 @@ $(document).on('ready', function () {
                 droppable.parent().prepend(div);
                 const data = {
                     position,
-                    type: draggable.data('type'),
+                    stamp_image_id: draggable.data('stamp'),
                     page: num,
                     pdf_id: PDF.id
                 };

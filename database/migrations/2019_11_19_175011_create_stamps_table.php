@@ -17,7 +17,7 @@ class CreateStampsTable extends Migration
             $table->integer('page')->index();
             $table->integer('pdf_id')->index();
             $table->string('position');
-            $table->string('type');
+            $table->integer('stamp_image_id')->index();
             $table->integer('created_by')->index();
             $table->integer('updated_by')->index()->nullable();
             $table->timestamps();
