@@ -255,6 +255,9 @@
      width: 100%;
  }
 
+  .stamp-block:hover{
+      cursor: move;
+  }
   .stamp-block span {
      display: block;
      font-size: 14px;
@@ -262,21 +265,31 @@
      font-family: initial;
      letter-spacing: 0px;
      font-weight: bold;
-     background: #ececec;
-      padding: 5px;
  }
 
+ .stamp-image span {
+     background: #ececec;
+     padding: 5px;
+ }
 
-/*  .stamp-block,
- .stamp-revised,
- .stamp-reviewed,
- .stamp-received {
+.stamp-text span{
+    margin-top:10px;
+}
+
+
+.stamp-text{
+     padding: 10px;
      color: #203654;
      background: rgb(228, 233, 216);
      background: linear-gradient(90deg, rgb(227, 232, 242) 0%, rgb(112, 138, 192) 100%);
      border: 1px solid #203654;
  }
 
+.annotator-wrapper .stamp-text{
+    padding: 15px 15px 5px;
+    font-size:30px;
+ }
+/*
  .stamp-approved {
      color: #28381a;
      background: rgb(228, 233, 216);

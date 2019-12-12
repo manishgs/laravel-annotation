@@ -10,9 +10,21 @@ class AnnotationController extends Controller
 {
     public function index($id)
     {
-        // Todo- get pdf detail by id
+        // Todo- get pdf detail by user id
         $pdf = ['id' => $id, 'url'=>url('script/test.pdf') ];
-        $stamps = [['id' =>1 , 'url'=>'https://img.pngio.com/approved-png-png-image-with-transparent-background-completed-approved-stamp-png-840_485.png' ]];
+        // Todo - get stamps by user id
+        $stamps = [
+            [
+                'id' =>1,
+                'value'=>'https://img.pngio.com/approved-png-png-image-with-transparent-background-completed-approved-stamp-png-840_485.png',
+                'type' => 'image'
+            ],
+            [
+                'id' =>2,
+                'value'=>'Approved',
+                'type' => 'text'
+            ]
+        ];
 
         return view('annotation.index', compact('pdf', 'stamps'));
     }
