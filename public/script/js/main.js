@@ -22,7 +22,7 @@ function debounce(func, wait, immediate) {
 
 function loadStampList() {
     var html = STAMPS.map(function (stamp) {
-        return '<li><div class="stamp-select">' + getStampTemplate(stamp.id, stamp.url) + '</div></li>';
+        return '<li><div class="stamp-select">' + getStampTemplate(stamp) + '</div></li>';
     });
 
     $('.stamp-list').append(html);
@@ -43,12 +43,14 @@ function getStampUrlById(id) {
         return s.id === id;
     });
 
-    return stamps.length ? stamps[0].url : '';
+    return stamps.length ? stamps[0] : '';
 }
 
-function getStampTemplate(id, url) {
-    return '<div class="stamp-item stamp-block stamp-' + id + '" data-stamp="' + id + '">' +
-        '<img src="' + url + '" />' +
+function getStampTemplate(stamp) {
+    const html = stamp.type == 'image' ? '<img src="' + stamp.value + '" />' : stamp.value
+    const className = stamp.type == 'image' ? 'stamp-image' : 'stamp-text';
+    return '<div class="stamp-item stamp-block ' + className + ' stamp-' + stamp.id + '" data-stamp="' + stamp.id + '">' +
+        html +
         '</div>';
 }
 
@@ -208,7 +210,7 @@ $(document).on('ready', function () {
         loadStamp(num, function (data) {
             if (data.rows && data.rows.length) {
                 data.rows.forEach(function (v) {
-                    var stamp = $(getStampTemplate(v.stamp_image_id, getStampUrlById(v.stamp_image_id)));
+                    var stamp = $(getStampTemplate(getStampUrlById(v.stamp_image_id)));
                     stamp.append('<span>by ' + v.created_by.name + ' at ' + getDateFormat(v.created_date) + ' </span>')
                     v.position = getposition(v.position, v.page);
                     var div = renderStamp({
