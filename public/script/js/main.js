@@ -4,6 +4,15 @@ $.ajaxSetup({
     }
 });
 
+
+// when page load highlight annotation
+var highlightAnnotation = null;
+
+
+/* 
+    Helper Functions
+
+*/
 function debounce(func, wait, immediate) {
     var timeout;
     return function () {
@@ -19,6 +28,20 @@ function debounce(func, wait, immediate) {
         if (callNow) func.apply(context, args);
     };
 }
+
+function getDateFormat(timestamp) {
+    var date = moment(parseInt(timestamp));
+    return date.format('hh:mm a, MMM D, Y');
+}
+
+// --------------------------------------------------------------------------------- 
+
+
+
+/* 
+    Stamps
+
+*/
 
 function loadStampList() {
     var html = STAMPS.map(function (stamp) {
@@ -68,7 +91,6 @@ function getposition(position, page) {
     return position;
 }
 
-// Stamp
 function saveStamp(el, data) {
     data.position = getStampPositionInPercentage(data.position, data.page);
     var req = {
@@ -139,68 +161,187 @@ function stampDraggable(el, data) {
     });
 }
 
-function getDateFormat(timestamp) {
-    var date = moment(parseInt(timestamp));
-    return date.format('hh:mm a, MMM D, Y');
+
+/* Annotations */
+let createdList = [];
+function listenAnnotationEvents(event) {
+    event.subscribe("annotationCreated", function (annotation) {
+        if (createdList.findIndex(a => a.id === annotation.id) === -1) {
+            createdList.push(annotation);
+        }
+    });
+
+    event.subscribe("annotationDeleted", function (annotation) {
+        createdList = createdList.filter(a => a.id != annotation.id);
+    });
+}
+
+function deleteAnnotations() {
+    // toggle delete options
+    $('.deleteAnnotations').on('click', function () {
+        $('.annotation-delete-option').toggle();
+    });
+
+    $('.annotation-option-list li').on('click', function () {
+        const action = $(this).data('action');
+        if (action === 'all') {
+            deleteAllAnnnotations()
+        } else if (action === 'session') {
+            deleteSessionAnnotations()
+        } else {
+            alert('Invalid action')
+        }
+
+        $('.annotation-delete-option').toggle();
+    });
+}
+
+function deleteAllAnnnotations() {
+    if (confirm('Do you want to remove all annotations?')) {
+        $.ajax({
+            method: "DELETE",
+            url: "/annotation/" + PDF.id + "/deleteAll",
+        }).done(function () {
+            $('.annotator-pdf-hl').remove();
+            $('.annotator-hl').each(function () {
+                $(this).replaceWith($(this).text());
+            })
+        });
+    }
+}
+
+function deleteSessionAnnotations() {
+    if (!createdList.length) {
+        alert('You have not created any annotion.')
+        return;
+    }
+
+    if (confirm('Do you want to remove ' + createdList.length + ' annotations created during this session?')) {
+        const ids = createdList.map(a => a.id);
+        $.ajax({
+            method: "DELETE",
+            url: "/annotation/" + PDF.id + "/deleteAll",
+            data: { id: ids }
+        }).done(function () {
+            $('.annotator-pdf-hl').each(function () {
+                if (ids.includes($(this).data('annotation').id)) {
+                    $(this.remove());
+                }
+            });
+
+            $('.annotator-hl').each(function () {
+                if (ids.includes($(this).data('annotation').id)) {
+                    $(this).replaceWith($(this).text());
+                }
+            })
+            createdList.length = 0;
+        });
+    }
 }
 
 
-$(document).on('ready', function () {
-    // load stamp list
-    loadStampList();
+function onAnnotationSearch() {
+    var $this = $('#annotationFindInput')
+    var q = $this.val().trim();
+    if (q) {
+        $this.attr('data-status', 'pending');
+        $.ajax({
+            method: "GET",
+            url: "/annotation/" + PDF.id + "/search?q=" + q
+        }).done(function (data) {
+            var str = '<ul class="annotation-list">';
+            var foundIds = [];
+            data.rows.forEach(function (v) {
+                str += '<li class="item" data-page="' + v.page + '" data-id="' + v.id + '" data-annotation="' + v.id + '" ><span>' + v.page + '</span>' + v.text + '</li>'
+            });
+            str += '</ul>';
 
-    // when click on delete annotation
-    Annotator.Viewer.prototype.onDeleteClick = function (event) {
-        if (confirm('Do you want to delete this annotation along with comments?')) {
-            return this.onButtonClick(event, "delete")
-        }
-    };
+            if (data.total < 1) {
+                str = "<div class='no-result'>Annotations not found</div>";
+            }
 
-    // toggle show stamp list
-    $('.botton-stamp').on('click', function () {
-        $('.stamp-collection').toggle();
-    })
+            $('.annotationsearchList').show().html(str);
+        }).fail(function () {
+            alert("Error while annotation search.");
+        }).always(function () {
+            $this.attr('data-status', '');
+        });
 
-
-    // update worker url and pdf url
-    document.addEventListener('load', function () {
-        PDFViewerApplicationOptions.set('workerSrc', WORKER_URL);
-        PDFViewerApplicationOptions.set('defaultUrl', PDF.url);
-    }, true);
-
-    // update page title
-    document.addEventListener('documentloaded', function (params) {
-        PDFViewerApplication.setTitle(PAGE_TITLE);
-    });
-
-    // when page load highlight annotation
-    var highlightAnnotation = null;
-
-    // update mode
-    $('body').addClass('mode_' + MODE);
-    $('.mode-' + MODE).addClass('active');
+    } else {
+        $this.attr('data-status', '');
+        $('.annotationsearchList').hide();
+    }
+}
 
 
-    // toggle mode
-    $('.toggleMode').on('click', function (e) {
-        e.preventDefault();
-        if ($(this).data('mode') === 'text') {
-            MODE = 'text';
-            $(this).addClass('active');
-            $('.mode-shape').removeClass('active');
-            $('.page').find('.annotator-wrapper').boxer('destroy');
-            $('body').removeClass('mode_shape').addClass('mode_text');
+function annotationSearch() {
+    // show annotations search result when click on input when result is present
+    $('#annotationFindInput').on('click', function () {
+        if ($('.annotationsearchList').find('li').length) {
+            $('.annotationsearchList').show();
         } else {
-            MODE = 'shape';
-            $('.mode-shape').removeClass('active');
-            $('.mode-text').removeClass('active');
-            $(this).addClass('active');
-            $('.page').find('.annotator-wrapper').boxer({ disabled: false, shape: $(this).data('mode') });
-            $('body').removeClass('mode_text').addClass('mode_shape');
+            $('.annotationsearchList').hide();
         }
-        $('body').data('shape', $(this).data('mode'));
     });
 
+    // search annotations
+    $('#annotationFindInput').on('input', debounce(onAnnotationSearch, 500));
+
+
+    // when click on other than annoation list then hide the list
+    $(document).mouseup(function (e) {
+        var container = $('.annotationsearchList');
+        if (!container.is(e.target) && container.has(e.target).length === 0) {
+            container.hide();
+        }
+    });
+
+    showAnnotationWhenClick();
+}
+
+function showAnnotationWhenClick() {
+    // when click on annotation show annotation pop
+    $(document).on('click', '.annotation-list .item', function () {
+        $('.annotator-viewer').addClass('annotator-hide');
+        $('.annotationsearchList').hide();
+        var id = $(this).data('id');
+        var page = $(this).data('page');
+        const content = $('#viewer').find('.page:nth-child(' + page + ')');
+        var found = false;
+        if (content.find('.canvasWrapper').length) {
+            content.find('.annotator-hl').each(function (i, a) {
+                var a = $(this);
+                var annotation = a.data('annotation');
+                if (!found && annotation.id == id) {
+                    found = true;
+                    if (PDFViewerApplication.page !== page) {
+                        PDFViewerApplication.pdfViewer.currentPageNumber = page;
+                    }
+                    setTimeout(() => {
+                        var el = annotation.highlights ? $(annotation.highlights) : $('.annotator-' + annotation.id);
+                        var position = el.offset();
+                        var top = position.top + $('#viewerContainer').scrollTop();
+                        var left = position.left - content.offset().left;
+                        $('#viewerContainer').animate({
+                            scrollTop: top - 200
+                        }, '500');
+                        position.top = position.top - content.offset().top;
+                        position.left = left + (el.width() / 2);
+                        content.data('annotator').showViewer([annotation], position);
+                    }, 100);
+                }
+            });
+        }
+
+        if (!found) {
+            highlightAnnotation = { id, page };
+            PDFViewerApplication.pdfViewer.currentPageNumber = page;
+        }
+    });
+}
+
+
+function loadAnnotations() {
     // load annotation when pdf text render
     document.addEventListener('pagerendered', function (event) {
         const num = event.detail.pageNumber;
@@ -225,6 +366,7 @@ $(document).on('ready', function () {
         })
     });
 
+    // text is rendered
     document.addEventListener('textlayerrendered', function (event) {
         const num = event.detail.pageNumber;
         const content = $('#viewer').find('.page:nth-child(' + num + ')');
@@ -318,112 +460,78 @@ $(document).on('ready', function () {
                 content.find('.annotator-wrapper').boxer('destroy');
             }
         });
-    }, true);
 
-    // delete all annotations
-    $('.deleteAnnotations').on('click', function () {
-        if (confirm('Do you want to remove all annotations?')) {
-            $.ajax({
-                method: "DELETE",
-                url: "/annotation/" + PDF.id + "/deleteAll",
-            }).done(function () {
-                $('.annotator-pdf-hl').remove();
-                $('.annotator-hl').each(function () {
-                    $(this).replaceWith($(this).text());
-                })
-            });
+        // listen for events
+        listenAnnotationEvents(content.data('annotator'));
+
+    }, true);
+}
+
+
+function updateMode() {
+    $('body').addClass('mode_' + MODE);
+    $('.mode-' + MODE).addClass('active');
+
+
+    // toggle mode
+    $('.toggleMode').on('click', function (e) {
+        e.preventDefault();
+        if ($(this).data('mode') === 'text') {
+            MODE = 'text';
+            $(this).addClass('active');
+            $('.mode-shape').removeClass('active');
+            $('.page').find('.annotator-wrapper').boxer('destroy');
+            $('body').removeClass('mode_shape').addClass('mode_text');
+        } else {
+            MODE = 'shape';
+            $('.mode-shape').removeClass('active');
+            $('.mode-text').removeClass('active');
+            $(this).addClass('active');
+            $('.page').find('.annotator-wrapper').boxer({ disabled: false, shape: $(this).data('mode') });
+            $('body').removeClass('mode_text').addClass('mode_shape');
         }
+        $('body').data('shape', $(this).data('mode'));
+    });
+}
+
+
+$(document).on('ready', function () {
+    // load stamp list
+    loadStampList();
+
+    // when click on delete annotation
+    Annotator.Viewer.prototype.onDeleteClick = function (event) {
+        if (confirm('Do you want to delete this annotation along with comments?')) {
+            return this.onButtonClick(event, "delete")
+        }
+    };
+
+    // toggle show stamp list
+    $('.botton-stamp').on('click', function () {
+        $('.stamp-collection').toggle();
     })
 
-    // show annotations search result when click on input when result is present
-    $('#annotationFindInput').on('click', function () {
-        if ($('.annotationsearchList').find('li').length) {
-            $('.annotationsearchList').show();
-        } else {
-            $('.annotationsearchList').hide();
-        }
+
+    // update worker url and pdf url
+    document.addEventListener('load', function () {
+        PDFViewerApplicationOptions.set('workerSrc', WORKER_URL);
+        PDFViewerApplicationOptions.set('defaultUrl', PDF.url);
+    }, true);
+
+    // update page title
+    document.addEventListener('documentloaded', function (params) {
+        PDFViewerApplication.setTitle(PAGE_TITLE);
     });
 
-    // search annotations
-    $('#annotationFindInput').on('input', debounce(onAnnotationSearch, 500));
+    // update mode
+    updateMode();
 
-    function onAnnotationSearch() {
-        var $this = $('#annotationFindInput')
-        var q = $this.val().trim();
-        if (q) {
-            $this.attr('data-status', 'pending');
-            $.ajax({
-                method: "GET",
-                url: "/annotation/" + PDF.id + "/search?q=" + q
-            }).done(function (data) {
-                var str = '<ul class="annotation-list">';
-                var foundIds = [];
-                data.rows.forEach(function (v) {
-                    str += '<li class="item" data-page="' + v.page + '" data-id="' + v.id + '" data-annotation="' + v.id + '" ><span>' + v.page + '</span>' + v.text + '</li>'
-                });
-                str += '</ul>';
+    // load annotations on pdf
+    loadAnnotations()
 
-                if (data.total < 1) {
-                    str = "<div class='no-result'>Annotations not found</div>";
-                }
+    // delete all annotations
+    deleteAnnotations()
 
-                $('.annotationsearchList').show().html(str);
-            }).fail(function () {
-                alert("Error while annotation search.");
-            }).always(function () {
-                $this.attr('data-status', '');
-            });
-
-        } else {
-            $this.attr('data-status', '');
-            $('.annotationsearchList').hide();
-        }
-    }
-
-    // when click on other than annoation list then hide the list
-    $(document).mouseup(function (e) {
-        var container = $('.annotationsearchList');
-        if (!container.is(e.target) && container.has(e.target).length === 0) {
-            container.hide();
-        }
-    });
-
-    // when click on annotation show annotation pop
-    $(document).on('click', '.annotation-list .item', function () {
-        $('.annotator-viewer').addClass('annotator-hide');
-        $('.annotationsearchList').hide();
-        var id = $(this).data('id');
-        var page = $(this).data('page');
-        const content = $('#viewer').find('.page:nth-child(' + page + ')');
-        var found = false;
-        if (content.find('.canvasWrapper').length) {
-            content.find('.annotator-hl').each(function (i, a) {
-                var a = $(this);
-                var annotation = a.data('annotation');
-                if (!found && annotation.id == id) {
-                    found = true;
-                    if (PDFViewerApplication.page !== page) {
-                        PDFViewerApplication.pdfViewer.currentPageNumber = page;
-                    }
-                    setTimeout(() => {
-                        var el = annotation.highlights ? $(annotation.highlights) : $('.annotator-' + annotation.id);
-                        var position = el.offset();
-                        var top = position.top + $('#viewerContainer').scrollTop();
-                        var left = position.left - content.offset().left;
-                        $('#viewerContainer').animate({
-                            scrollTop: top - 200
-                        }, '500');
-                        position.top = position.top - content.offset().top;
-                        position.left = left + (el.width() / 2);
-                        content.data('annotator').showViewer([annotation], position);
-                    }, 100);
-                }
-            });
-        }
-
-        if (!found) {
-            highlightAnnotation = { id, page };
-            PDFViewerApplication.pdfViewer.currentPageNumber = page;
-        }
-    });
+    // enable annotation search 
+    annotationSearch()
 });

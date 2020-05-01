@@ -211,13 +211,28 @@
                         </button>
                       </div>
                       <div id="toolbarViewerMiddle">
-                        <input id="annotationFindInput" style="width: 150px;" class="toolbarField" title="Find"
-                          placeholder="Search Annotations" />
+                        <input id="annotationFindInput" 
+                          autocomplete="off" 
+                          style="width: 150px;" 
+                          class="toolbarField" title="Find"
+                          placeholder="Search Annotations" />s
                         <div class="findbar annotationsearchList doorHanger" id="findbar">
                         </div>
-                        <button title="Delete all annotation" class="toolbarButton deleteAnnotations">
-                          <img src="{{url('script/images/trash.svg')}}" style="height: 12px;" />
-                        </button>
+                        
+                         <div style="position:relative">
+                            <button title="Delete annotation" class="toolbarButton deleteAnnotations">
+                              <img src="{{url('script/images/trash.svg')}}" style="height: 12px;" />
+                            </button>
+
+                            <div class="findbar doorHanger annotation-delete-option" id="findbar"
+                              style="display:none; position: absolute; left:0px; min-width: 285px;">
+                              <ul class="annotation-option-list">
+                                <li data-action="all">All annotations</li>
+                                <li data-action="session">Created during this session</li>
+                              </ul>
+                            </div>
+                        </div>
+
                         <button title="Text annotation" data-mode="text" class="toolbarButton toggleMode mode-text">
                           <img src="{{url('script/images/text.svg')}}" style="height: 12px;" />
                         </button>

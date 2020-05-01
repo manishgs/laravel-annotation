@@ -66,7 +66,15 @@ Annotator.Plugin.Shape = (function (_super) {
             }
         };
 
-        annotator.subscribe("annotationCreated", enableDragableResizable);
+        annotator.subscribe("annotationCreated", function (annotation) {
+            console.log(annotation);
+            setTimeout(function () {
+                $('.annotator-' + annotation.annotationId)
+                    .attr('data-annotation-id', annotation.id)
+                    .addClass('annotator-' + annotation.id);
+                enableDragableResizable(annotation)
+            }, 200)
+        });
 
         annotator.subscribe("annotationsLoaded", function (annotations) {
             boxEl.find('div.annotator-hl').remove();
