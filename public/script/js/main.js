@@ -133,10 +133,12 @@ function loadStamp(page, callback) {
     });
 }
 
-function renderStamp(shape, draggable) {
+function renderStamp(shape, draggable, type) {
     var zoom = PDFViewerApplication.pdfViewer._currentScale;
     var div = $('<div class="stamp"></div>');
-    draggable.css({ 'zoom': zoom })
+    draggable.css({ 'zoom': zoom });
+    shape.width = shape.width || 250;
+    shape.height = shape.height || (shape.width * getStampRatio(type));
     div.css(shape);
     div.html(draggable);
     var trash = $('<div class="delete-stamp"><img src="/script/images/trash.svg" /></div>');
@@ -391,11 +393,11 @@ function loadAnnotations() {
                     stamp.append('<span>by ' + v.created_by.name + ' <br/> ' + getDateFormat(v.created_date) + ' </span>')
                     v.position = getposition(v.position, v.page);
                     var div = renderStamp({
-                        top: v.position.top + 'px',
-                        left: v.position.left + 'px',
-                        height: v.position.height + 'px',
-                        width: v.position.width + 'px'
-                    }, stamp);
+                        top: v.position.top,
+                        left: v.position.left,
+                        height: v.position.height,
+                        width: v.position.width
+                    }, stamp, v.stamp_image_id);
                     div.data('stamp', v);
                     content.prepend(div);
                     stampDraggable(div, v);
@@ -461,7 +463,7 @@ function loadAnnotations() {
                 }
 
                 draggable.append('<span>by ' + USER.name + ' <br/> ' + getDateFormat(Date.now()) + ' </span>')
-                var div = renderStamp(position, draggable);
+                var div = renderStamp(position, draggable, stampType);
                 droppable.parent().prepend(div);
                 const data = {
                     position,
