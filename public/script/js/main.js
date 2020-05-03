@@ -81,6 +81,8 @@ function getStampPositionInPercentage(position, page) {
     var canvas = $('#viewer').find('.page:nth-child(' + page + ')').find('canvas');
     position.top = position.top / canvas.height();
     position.left = position.left / canvas.width();
+    position.height = position.height / canvas.height();
+    position.width = position.width / canvas.width();
     return position;
 }
 
@@ -88,6 +90,8 @@ function getposition(position, page) {
     var canvas = $('#viewer').find('.page:nth-child(' + page + ')').find('canvas');
     position.top = position.top * canvas.height();
     position.left = position.left * canvas.width();
+    position.height = position.height * canvas.height();
+    position.width = position.width * canvas.width();
     return position;
 }
 
@@ -152,13 +156,45 @@ function stampDraggable(el, data) {
         containment: "parent",
         cursor: "move",
         scroll: true,
-        stop: function (e) {
-            var el = $(e.target);
-            data.position.top = el.css('top').replace('px', '');
-            data.position.left = el.css('left').replace('px', '');
-            saveStamp(el, data);
-        },
+        stop: updateStampChange(data),
     });
+
+    el.resizable({
+        helper: "stamp-resizable-helper",
+        stop: updateStampChange(data),
+        minHeight: 100,
+        minWidth: 100,
+        aspectRatio: false
+    })
+}
+
+function updateStampChange(data) {
+    return function (e, ele) {
+        var el = $(e.target);
+        var position = {};
+        var width = parseInt(el.css('width').replace('px', ''));
+        var height = parseInt(el.css('height').replace('px', ''));
+
+        if (e.type == 'resizestop') {
+            width = ele.size.width;
+            height = ele.size.height;
+
+            el.css('height', height + 'px');
+            el.css('width', width + 'px');
+        }
+
+        position.top = el.css('top').replace('px', '');
+        position.left = el.css('left').replace('px', '');
+        position.height = height;
+        position.width = width;
+
+        data.position = position;
+        saveStamp(el, data);
+    };
+}
+
+function getStampRatio(type) {
+    return type == 1 ? 0.8 : 0.4;
 }
 
 
@@ -352,11 +388,13 @@ function loadAnnotations() {
             if (data.rows && data.rows.length) {
                 data.rows.forEach(function (v) {
                     var stamp = $(getStampTemplate(getStampUrlById(v.stamp_image_id)));
-                    stamp.append('<span>by ' + v.created_by.name + ' at ' + getDateFormat(v.created_date) + ' </span>')
+                    stamp.append('<span>by ' + v.created_by.name + ' <br/> ' + getDateFormat(v.created_date) + ' </span>')
                     v.position = getposition(v.position, v.page);
                     var div = renderStamp({
                         top: v.position.top + 'px',
-                        left: v.position.left + 'px'
+                        left: v.position.left + 'px',
+                        height: v.position.height + 'px',
+                        width: v.position.width + 'px'
                     }, stamp);
                     div.data('stamp', v);
                     content.prepend(div);
@@ -413,17 +451,21 @@ function loadAnnotations() {
                 draggable = draggable.find('.stamp-item');
                 draggable.removeClass('stamp-item').removeClass('ui-draggable').removeClass('ui-draggable-handle');
                 var offset = $('.ui-draggable-dragging').offset();
+                var stampType = draggable.data('stamp');
+                var width = 250 * PDFViewerApplication.pdfViewer._currentScale;
                 var position = {
                     top: offset.top - (content.offset().top + 10),
-                    left: offset.left - (content.offset().left + 10)
+                    left: offset.left - (content.offset().left + 10),
+                    width: width,
+                    height: getStampRatio(stampType) * width
                 }
 
-                draggable.append('<span>by ' + USER.name + ' at ' + getDateFormat(Date.now()) + ' </span>')
+                draggable.append('<span>by ' + USER.name + ' <br/> ' + getDateFormat(Date.now()) + ' </span>')
                 var div = renderStamp(position, draggable);
                 droppable.parent().prepend(div);
                 const data = {
                     position,
-                    stamp_image_id: draggable.data('stamp'),
+                    stamp_image_id: stampType,
                     page: num,
                     pdf_id: PDF.id
                 };
