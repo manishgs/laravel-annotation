@@ -115,7 +115,9 @@ function saveStamp(el, data) {
     }
 
     $.ajax(req).done(function (data) {
-        el.data('stamp', data);
+        if (Object.keys(data).length > 1) {
+            el.data('stamp', data);
+        }
     });
 }
 
