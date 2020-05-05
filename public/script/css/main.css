@@ -273,9 +273,12 @@
  }
 
 .stamp-text span{
-    margin-top:10px;
+    margin-top:5px;
 }
 
+.stamp-text p{
+    margin: 0px;
+}
 
 .stamp-text{
      padding: 10px;
@@ -286,10 +289,10 @@
     height: 100%;
  }
 
-.annotator-wrapper .stamp-text{
-    padding: 15px 15px 5px;
+.stamp-text p {
     font-size:30px;
  }
+
 /*
  .stamp-approved {
      color: #28381a;
@@ -390,12 +393,8 @@
     background-color:#3e3b3b;
 }
 
-.ui-resizable-handle .ui-resizable-s:hover {
-    border-bottom: dashed 1px #bbb;
-}
-
-.ui-resizable-handle .ui-resizable-e:hover {
-    border-right: dashed 1px #bbb;
+.ui-resizable-e, .stamp .ui-resizable-s {
+    display: none !important;
 }
 
 .stamp-resizable-helper{

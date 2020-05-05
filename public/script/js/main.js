@@ -43,6 +43,8 @@ function getDateFormat(timestamp) {
 
 */
 
+const defaultWidth = 200;
+
 function loadStampList() {
     var html = STAMPS.map(function (stamp) {
         return '<li><div class="stamp-select">' + getStampTemplate(stamp) + '</div></li>';
@@ -70,7 +72,7 @@ function getStampUrlById(id) {
 }
 
 function getStampTemplate(stamp) {
-    const html = stamp.type == 'image' ? '<img src="' + stamp.value + '" />' : stamp.value
+    const html = stamp.type == 'image' ? '<img src="' + stamp.value + '" />' : '<p>' + stamp.value + '</p>'
     const className = stamp.type == 'image' ? 'stamp-image' : 'stamp-text';
     return '<div class="stamp-item stamp-block ' + className + ' stamp-' + stamp.id + '" data-stamp="' + stamp.id + '">' +
         html +
@@ -133,11 +135,29 @@ function loadStamp(page, callback) {
     });
 }
 
+function getTextZoom(shape) {
+    let percentage = shape.width / defaultWidth;
+    console.log(percentage);
+    if (percentage <= 0.5) {
+        percentage = (percentage * 1.50);
+    }
+    return percentage;
+}
+
+function updateTextZoom(el, shape) {
+    const data = el.data('stamp');
+    const type = data.stamp_image_id || data;
+    const zoom = getTextZoom(shape);
+    const font = zoom >= 1 ? type == 1 ? 12 : 9 : 14;
+    el.find('span').css({ 'zoom': zoom, 'font-size': font });
+    el.find('p').css({ 'zoom': zoom })
+}
+
 function renderStamp(shape, draggable, type) {
     var zoom = PDFViewerApplication.pdfViewer._currentScale;
     var div = $('<div class="stamp"></div>');
     draggable.css({ 'zoom': zoom });
-    shape.width = shape.width || 250;
+    shape.width = shape.width || defaultWidth;
     shape.height = shape.height || (shape.width * getStampRatio(type));
     div.css(shape);
     div.html(draggable);
@@ -150,6 +170,7 @@ function renderStamp(shape, draggable, type) {
         }
     });
     div.prepend(trash);
+    updateTextZoom(draggable, shape);
     return div;
 }
 
@@ -190,6 +211,7 @@ function updateStampChange(data) {
         position.height = height;
         position.width = width;
 
+        updateTextZoom(el, position);
         data.position = position;
         saveStamp(el, data);
     };
@@ -392,12 +414,7 @@ function loadAnnotations() {
                     var stamp = $(getStampTemplate(getStampUrlById(v.stamp_image_id)));
                     stamp.append('<span>by ' + v.created_by.name + ' <br/> ' + getDateFormat(v.created_date) + ' </span>')
                     v.position = getposition(v.position, v.page);
-                    var div = renderStamp({
-                        top: v.position.top,
-                        left: v.position.left,
-                        height: v.position.height,
-                        width: v.position.width
-                    }, stamp, v.stamp_image_id);
+                    var div = renderStamp(v.position, stamp, v.stamp_image_id);
                     div.data('stamp', v);
                     content.prepend(div);
                     stampDraggable(div, v);
