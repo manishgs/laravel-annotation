@@ -139,7 +139,6 @@ function loadStamp(page, callback) {
 
 function getTextZoom(shape) {
     let percentage = shape.width / defaultWidth;
-    console.log(percentage);
     if (percentage <= 0.5) {
         percentage = (percentage * 1.50);
     }
