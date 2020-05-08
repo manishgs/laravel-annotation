@@ -187,7 +187,7 @@ function stampDraggable(el, data) {
         helper: "stamp-resizable-helper",
         stop: updateStampChange(data),
         minHeight: 100,
-        minWidth: 100,
+        minWidth: 125,
         aspectRatio: false
     })
 }

@@ -276,10 +276,6 @@
     margin-top:5px;
 }
 
-.stamp-text p{
-    margin: 0px;
-}
-
 .stamp-text{
      padding: 10px;
      color: #203654;
@@ -291,6 +287,7 @@
 
 .stamp-text p {
     font-size:30px;
+    margin: 0px;
  }
 
 /*
@@ -393,7 +390,7 @@
     background-color:#3e3b3b;
 }
 
-.ui-resizable-e, .stamp .ui-resizable-s {
+ .stamp .ui-resizable-s {
     display: none !important;
 }
 
@@ -405,3 +402,7 @@
     z-index: 9999 !important;
 }
 
+
+.stamp.ui-resizable{
+    height: auto !important;
+}
