@@ -43,6 +43,7 @@ function getDateFormat(timestamp) {
 */
 
 const defaultWidth = 200;
+const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
 
 function loadStampList() {
     var html = STAMPS.map(function (stamp) {
@@ -140,11 +141,15 @@ function updateTextZoom(el, shape) {
     const data = el.data('stamp');
     const type = data.stamp_image_id || data;
     const zoom = shape.width / defaultWidth;
-    console.log(zoom, shape);
-    const font = zoom >= 1 ? type == 1 ? 12 : 10 : 15;
-    const pfont = zoom >= 1 ? 30 : 27;
-    el.find('span').css({ 'zoom': zoom, 'font-size': font });
-    el.find('p').css({ 'zoom': zoom, 'font-size': pfont })
+    let font = zoom >= 1 ? type == 1 ? 12 : 10 : 15;
+    let pfont = zoom >= 1 ? 30 : 27;
+    if (isChrome) {
+        el.find('span').css({ 'zoom': zoom, 'font-size': font });
+        el.find('p').css({ 'zoom': zoom, 'font-size': pfont })
+    } else {
+        el.find('span').css({ 'font-size': font * zoom });
+        el.find('p').css({ 'font-size': pfont * zoom })
+    }
 }
 
 function renderStamp(shape, draggable, type) {
