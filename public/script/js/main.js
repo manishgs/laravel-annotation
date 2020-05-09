@@ -4,7 +4,6 @@ $.ajaxSetup({
     }
 });
 
-
 // when page load highlight annotation
 var highlightAnnotation = null;
 
@@ -58,7 +57,7 @@ function loadStampList() {
         cursor: 'move',
         drag: function (e) {
             var el = $(e.target).parent().find('.ui-draggable-dragging .stamp-item');
-            $(el).css({ zoom: PDFViewerApplication.pdfViewer._currentScale })
+            $(el).find('*').css({ zoom: PDFViewerApplication.pdfViewer._currentScale })
         },
     });
 }
@@ -137,27 +136,19 @@ function loadStamp(page, callback) {
     });
 }
 
-function getTextZoom(shape) {
-    let percentage = shape.width / defaultWidth;
-    if (percentage <= 0.5) {
-        percentage = (percentage * 1.50);
-    }
-    return percentage;
-}
-
 function updateTextZoom(el, shape) {
     const data = el.data('stamp');
     const type = data.stamp_image_id || data;
-    const zoom = getTextZoom(shape);
-    const font = zoom >= 1 ? type == 1 ? 12 : 9 : 14;
+    const zoom = shape.width / defaultWidth;
+    console.log(zoom, shape);
+    const font = zoom >= 1 ? type == 1 ? 12 : 10 : 15;
+    const pfont = zoom >= 1 ? 30 : 27;
     el.find('span').css({ 'zoom': zoom, 'font-size': font });
-    el.find('p').css({ 'zoom': zoom })
+    el.find('p').css({ 'zoom': zoom, 'font-size': pfont })
 }
 
 function renderStamp(shape, draggable, type) {
-    var zoom = PDFViewerApplication.pdfViewer._currentScale;
     var div = $('<div class="stamp"></div>');
-    draggable.css({ 'zoom': zoom });
     shape.width = shape.width || defaultWidth;
     shape.height = shape.height || (shape.width * getStampRatio(type));
     div.css(shape);
@@ -186,8 +177,8 @@ function stampDraggable(el, data) {
     el.resizable({
         helper: "stamp-resizable-helper",
         stop: updateStampChange(data),
-        minHeight: 100,
-        minWidth: 125,
+        minHeight: 80 * PDFViewerApplication.pdfViewer._currentScale,
+        minWidth: 100 * PDFViewerApplication.pdfViewer._currentScale,
         aspectRatio: false
     })
 }
