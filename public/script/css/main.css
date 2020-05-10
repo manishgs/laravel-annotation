@@ -406,3 +406,19 @@
 .stamp.ui-resizable{
     height: auto !important;
 }
+
+#sidebarContainer * {
+    -webkit-box-sizing: initial;
+    -moz-box-sizing: initial;
+    box-sizing: initial;
+}
+
+#sidebarContainer .thumbnail{
+    padding: 0px;
+    background-color: transparent;
+    border: none;
+}
+
+#sidebarContainer .thumbnail:not([data-loaded]) {
+    border: 1px dashed rgba(255, 255, 255, 0.5);
+  }
