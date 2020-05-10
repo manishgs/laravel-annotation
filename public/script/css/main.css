@@ -422,3 +422,65 @@
 #sidebarContainer .thumbnail:not([data-loaded]) {
     border: 1px dashed rgba(255, 255, 255, 0.5);
   }
+
+html[dir='ltr'] .toolbarButton#thunbnailToggle::before {
+    content: url(../images/toolbarButton-sidebarToggle.png);
+}
+html[dir='rtl'] .toolbarButton#thunbnailToggle::before {
+    content: url(../images/toolbarButton-sidebarToggle-rtl.png);
+}
+    
+#annotationViewer, #thumbnailViewer {
+    display: none;
+}    
+
+.loading {
+    font-size: 12px;
+    color: #fff;
+    text-align: center;
+    margin: 25px;
+}
+
+#annotationViewer .annotation-list {
+    color: #fff;
+    max-height: max-content;
+    margin:0px;
+}
+
+#annotationViewer .annotation-list li{
+    max-height: max-content;
+    flex-direction: column;
+}
+
+#annotationViewer .annotation-list li p.text{
+    font-size: 13px;
+    line-height: 16px;
+    color: #bfbfbf;
+}
+
+#annotationViewer .annotation-list li p.page{
+    color: #dadada;
+    font-size: 11px;
+    font-weight: bold;
+    margin:0px;
+}
+
+#annotationViewer .annotation-list li:hover, #annotationViewer .annotation-list li.active{
+background: #313131;
+}
+
+#annotationViewer .splitToolbarButton{
+    color: #fff;
+    line-height: 24px;
+    margin-left: 10px;
+}
+
+#annotationView{
+    position: absolute;
+    width: calc(100% - 20px);
+    top: 30px;
+    bottom: 0;
+    padding: 5px 10px 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}

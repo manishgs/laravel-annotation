@@ -33,10 +33,14 @@ class AnnotationController extends Controller
     {
         $q = $request->get('q');
 
-        $result = Annotation::select('annotations.id', 'annotations.page', 'comments.text')
-        ->join('comments', 'comments.annotation_id', '=', 'annotations.id')
-        ->whereRaw('comments.text LIKE "%'.trim($q).'%"')
-        ->get();
+        $query = Annotation::select('annotations.id', 'annotations.page', 'comments.text')
+        ->join('comments', 'comments.annotation_id', '=', 'annotations.id');
+
+        if($q){
+            $query->whereRaw('comments.text LIKE "%'.trim($q).'%"');
+        }
+
+        $result = $query->get();
 
         $ids = [];
         $data =[];
