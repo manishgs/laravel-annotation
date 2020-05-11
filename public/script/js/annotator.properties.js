@@ -96,10 +96,10 @@ Annotator.Plugin.Properties = (function (_super) {
                             if (comment.text) {
                                 var date = moment(parseInt(comment.created_date));
                                 html += '<li data-id="' + i + '" style="padding:10px 10px 10px 15px">' +
-                                    comment.text + '<br/> By ' +
-                                    comment.created_by.name + ' at ' +
+                                    '<span style="color:#404040">' + comment.text + '</span><p style="margin-top:5px">By ' +
+                                    (comment.created_by ? comment.created_by.name : '') + ' <br/> ' +
                                     date.format('h:m a, MMM D, Y') +
-                                    '<span class="annotator-item-controls">' +
+                                    '</p> <span class="annotator-item-controls">' +
                                     '<button title="Edit Comment" class="annotator-edit">Edit</button>' +
                                     '<button title="Delete Comment" class="annotator-comment-delete">Delete</button>' +
                                     '</span>' +
