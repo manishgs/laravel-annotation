@@ -196,8 +196,10 @@
  }
 
  .stamp {
-     position: absolute;
-     z-index: 99
+     position: absolute !important;
+     z-index: 99;
+     background: #ececec;
+     overflow: hidden;
  }
 
 .stamp .delete-stamp {
@@ -232,7 +234,6 @@
      font-style: italic;
      font-size: 22px;
      letter-spacing: 1px;
-     line-height: 20px;
  }
 
  .stamp-list li {
@@ -247,7 +248,6 @@
  .stamp .stamp-block,
  .stamp-select.ui-draggable-dragging .stamp-item{
      text-align: left;
-     width: 250px;
  }
 
  .stamp .stamp-block img,
@@ -273,9 +273,8 @@
  }
 
 .stamp-text span{
-    margin-top:10px;
+    margin-top:5px;
 }
-
 
 .stamp-text{
      padding: 10px;
@@ -283,12 +282,14 @@
      background: rgb(228, 233, 216);
      background: linear-gradient(90deg, rgb(227, 232, 242) 0%, rgb(112, 138, 192) 100%);
      border: 1px solid #203654;
+    height: 100%;
  }
 
-.annotator-wrapper .stamp-text{
-    padding: 15px 15px 5px;
+.stamp-text p {
     font-size:30px;
+    margin: 0px;
  }
+
 /*
  .stamp-approved {
      color: #28381a;
@@ -388,3 +389,36 @@
 .annotation-option-list li:hover {
     background-color:#3e3b3b;
 }
+
+ .stamp .ui-resizable-s {
+    display: none !important;
+}
+
+.stamp-resizable-helper{
+    border: 1px solid #649496;
+    background: #def2f54d;
+    padding: 20px;
+    border-radius: 0px !important;
+    z-index: 9999 !important;
+}
+
+
+.stamp.ui-resizable{
+    height: auto !important;
+}
+
+#sidebarContainer * {
+    -webkit-box-sizing: initial;
+    -moz-box-sizing: initial;
+    box-sizing: initial;
+}
+
+#sidebarContainer .thumbnail{
+    padding: 0px;
+    background-color: transparent;
+    border: none;
+}
+
+#sidebarContainer .thumbnail:not([data-loaded]) {
+    border: 1px dashed rgba(255, 255, 255, 0.5);
+  }

@@ -4,7 +4,6 @@ $.ajaxSetup({
     }
 });
 
-
 // when page load highlight annotation
 var highlightAnnotation = null;
 
@@ -43,6 +42,9 @@ function getDateFormat(timestamp) {
 
 */
 
+const defaultWidth = 200;
+const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+
 function loadStampList() {
     var html = STAMPS.map(function (stamp) {
         return '<li><div class="stamp-select">' + getStampTemplate(stamp) + '</div></li>';
@@ -56,7 +58,7 @@ function loadStampList() {
         cursor: 'move',
         drag: function (e) {
             var el = $(e.target).parent().find('.ui-draggable-dragging .stamp-item');
-            $(el).css({ zoom: PDFViewerApplication.pdfViewer._currentScale })
+            $(el).find('*').css({ zoom: PDFViewerApplication.pdfViewer._currentScale })
         },
     });
 }
@@ -70,7 +72,7 @@ function getStampUrlById(id) {
 }
 
 function getStampTemplate(stamp) {
-    const html = stamp.type == 'image' ? '<img src="' + stamp.value + '" />' : stamp.value
+    const html = stamp.type == 'image' ? '<img src="' + stamp.value + '" />' : '<p>' + stamp.value + '</p>'
     const className = stamp.type == 'image' ? 'stamp-image' : 'stamp-text';
     return '<div class="stamp-item stamp-block ' + className + ' stamp-' + stamp.id + '" data-stamp="' + stamp.id + '">' +
         html +
@@ -81,6 +83,8 @@ function getStampPositionInPercentage(position, page) {
     var canvas = $('#viewer').find('.page:nth-child(' + page + ')').find('canvas');
     position.top = position.top / canvas.height();
     position.left = position.left / canvas.width();
+    position.height = position.height / canvas.height();
+    position.width = position.width / canvas.width();
     return position;
 }
 
@@ -88,6 +92,8 @@ function getposition(position, page) {
     var canvas = $('#viewer').find('.page:nth-child(' + page + ')').find('canvas');
     position.top = position.top * canvas.height();
     position.left = position.left * canvas.width();
+    position.height = position.height * canvas.height();
+    position.width = position.width * canvas.width();
     return position;
 }
 
@@ -109,7 +115,9 @@ function saveStamp(el, data) {
     }
 
     $.ajax(req).done(function (data) {
-        el.data('stamp', data);
+        if (Object.keys(data).length > 1) {
+            el.data('stamp', data);
+        }
     });
 }
 
@@ -129,10 +137,25 @@ function loadStamp(page, callback) {
     });
 }
 
-function renderStamp(shape, draggable) {
-    var zoom = PDFViewerApplication.pdfViewer._currentScale;
+function updateTextZoom(el, shape) {
+    const data = el.data('stamp');
+    const type = data.stamp_image_id || data;
+    const zoom = shape.width / defaultWidth;
+    let font = zoom >= 1 ? type == 1 ? 12 : 10 : 15;
+    let pfont = zoom >= 1 ? 30 : 27;
+    if (isChrome) {
+        el.find('span').css({ 'zoom': zoom, 'font-size': font });
+        el.find('p').css({ 'zoom': zoom, 'font-size': pfont })
+    } else {
+        el.find('span').css({ 'font-size': font * zoom });
+        el.find('p').css({ 'font-size': pfont * zoom })
+    }
+}
+
+function renderStamp(shape, draggable, type) {
     var div = $('<div class="stamp"></div>');
-    draggable.css({ 'zoom': zoom })
+    shape.width = shape.width || defaultWidth;
+    shape.height = shape.height || (shape.width * getStampRatio(type));
     div.css(shape);
     div.html(draggable);
     var trash = $('<div class="delete-stamp"><img src="/script/images/trash.svg" /></div>');
@@ -144,6 +167,7 @@ function renderStamp(shape, draggable) {
         }
     });
     div.prepend(trash);
+    updateTextZoom(draggable, shape);
     return div;
 }
 
@@ -152,13 +176,46 @@ function stampDraggable(el, data) {
         containment: "parent",
         cursor: "move",
         scroll: true,
-        stop: function (e) {
-            var el = $(e.target);
-            data.position.top = el.css('top').replace('px', '');
-            data.position.left = el.css('left').replace('px', '');
-            saveStamp(el, data);
-        },
+        stop: updateStampChange(data),
     });
+
+    el.resizable({
+        helper: "stamp-resizable-helper",
+        stop: updateStampChange(data),
+        minHeight: 80 * PDFViewerApplication.pdfViewer._currentScale,
+        minWidth: 100 * PDFViewerApplication.pdfViewer._currentScale,
+        aspectRatio: false
+    })
+}
+
+function updateStampChange(data) {
+    return function (e, ele) {
+        var el = $(e.target);
+        var position = {};
+        var width = parseInt(el.css('width').replace('px', ''));
+        var height = parseInt(el.css('height').replace('px', ''));
+
+        if (e.type == 'resizestop') {
+            width = ele.size.width;
+            height = ele.size.height;
+
+            el.css('height', height + 'px');
+            el.css('width', width + 'px');
+        }
+
+        position.top = el.css('top').replace('px', '');
+        position.left = el.css('left').replace('px', '');
+        position.height = height;
+        position.width = width;
+
+        updateTextZoom(el, position);
+        data.position = position;
+        saveStamp(el, data);
+    };
+}
+
+function getStampRatio(type) {
+    return type == 1 ? 0.8 : 0.4;
 }
 
 
@@ -352,12 +409,9 @@ function loadAnnotations() {
             if (data.rows && data.rows.length) {
                 data.rows.forEach(function (v) {
                     var stamp = $(getStampTemplate(getStampUrlById(v.stamp_image_id)));
-                    stamp.append('<span>by ' + v.created_by.name + ' at ' + getDateFormat(v.created_date) + ' </span>')
+                    stamp.append('<span>by ' + v.created_by.name + ' <br/> ' + getDateFormat(v.created_date) + ' </span>')
                     v.position = getposition(v.position, v.page);
-                    var div = renderStamp({
-                        top: v.position.top + 'px',
-                        left: v.position.left + 'px'
-                    }, stamp);
+                    var div = renderStamp(v.position, stamp, v.stamp_image_id);
                     div.data('stamp', v);
                     content.prepend(div);
                     stampDraggable(div, v);
@@ -413,17 +467,21 @@ function loadAnnotations() {
                 draggable = draggable.find('.stamp-item');
                 draggable.removeClass('stamp-item').removeClass('ui-draggable').removeClass('ui-draggable-handle');
                 var offset = $('.ui-draggable-dragging').offset();
+                var stampType = draggable.data('stamp');
+                var width = 250 * PDFViewerApplication.pdfViewer._currentScale;
                 var position = {
                     top: offset.top - (content.offset().top + 10),
-                    left: offset.left - (content.offset().left + 10)
+                    left: offset.left - (content.offset().left + 10),
+                    width: width,
+                    height: getStampRatio(stampType) * width
                 }
 
-                draggable.append('<span>by ' + USER.name + ' at ' + getDateFormat(Date.now()) + ' </span>')
-                var div = renderStamp(position, draggable);
+                draggable.append('<span>by ' + USER.name + ' <br/> ' + getDateFormat(Date.now()) + ' </span>')
+                var div = renderStamp(position, draggable, stampType);
                 droppable.parent().prepend(div);
                 const data = {
                     position,
-                    stamp_image_id: draggable.data('stamp'),
+                    stamp_image_id: stampType,
                     page: num,
                     pdf_id: PDF.id
                 };
