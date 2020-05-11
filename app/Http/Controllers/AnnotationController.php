@@ -33,10 +33,14 @@ class AnnotationController extends Controller
     {
         $q = $request->get('q');
 
-        $result = Annotation::select('annotations.id', 'annotations.page', 'comments.text')
-        ->join('comments', 'comments.annotation_id', '=', 'annotations.id')
-        ->whereRaw('comments.text LIKE "%'.trim($q).'%"')
-        ->get();
+        $query = Annotation::select('annotations.id', 'annotations.page', 'comments.text')
+        ->join('comments', 'comments.annotation_id', '=', 'annotations.id');
+
+        if($q){
+            $query->whereRaw('comments.text LIKE "%'.trim($q).'%"');
+        }
+
+        $result = $query->get();
 
         $ids = [];
         $data =[];
@@ -117,7 +121,8 @@ class AnnotationController extends Controller
                     $comments[]=$comment;
                 }
             }
-            return response()->json([ 'annotationId'=> $data['id'], 'id' => $annotation->id, 'comments'=>$comments]);
+            $data_id = isset($data['id']) ? $data['id']: time();
+            return response()->json([ 'annotationId'=> $data_id, 'id' => $annotation->id, 'comments'=>$comments]);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 400);
         }

@@ -359,6 +359,18 @@ function annotationSearch() {
 function showAnnotationWhenClick() {
     // when click on annotation show annotation pop
     $(document).on('click', '.annotation-list .item', function () {
+        $('.annotation-list .item').removeClass('active');
+        $(this).addClass('active');
+        if ($(this).data('type') === 'sidebar') {
+            let parentDiv = $('#annotationView');
+            let annotationEl = $("#annotation-" + $(this).data('id'));
+            let pageOffsetTop = annotationEl.offset().top;
+            let parentTop = parentDiv.scrollTop();
+            let parentOffsetTop = parentDiv.offset().top;
+            let vTop = parentTop - parentOffsetTop + pageOffsetTop - 5;
+            parentDiv.animate({ scrollTop: vTop }, 500);
+        }
+
         $('.annotator-viewer').addClass('annotator-hide');
         $('.annotationsearchList').hide();
         var id = $(this).data('id');
@@ -526,6 +538,87 @@ function loadAnnotations() {
 }
 
 
+/* Sidebar Annotations */
+
+
+function fetchAndShowAnnotations() {
+    $.ajax({
+        method: "GET",
+        url: "/annotation/" + PDF.id + "/search"
+    }).done(function (data) {
+        var str = '<ul class="annotation-list">';
+        data.rows.sort((a, b) => a.page - b.page).forEach(function (v) {
+            str += '<li id="annotation-' + v.id + '" class="item" data-type="sidebar" data-page="' + v.page + '" data-id="' + v.id + '" data-annotation="' + v.id + '" >' +
+                '<p class="text">' + v.text + ' <strong class="page">(page ' + v.page + ')</strong></p>' +
+                '</li>'
+        });
+        str += '</ul>';
+
+        if (data.total < 1) {
+            str = "<div class='no-result'>Annotations not add yet.</div>";
+        }
+        $('#annotationViewer .count').text('(' + data.rows.length + ')');
+        $('#annotationViewer #annotationView').html(str);
+    }).fail(function () {
+        alert("Error while loading annotations.");
+    }).always(function () {
+    });
+}
+
+function loadSideBarAnnotation() {
+    $('#annotationToggle').on('click', function () {
+        if (PDFViewerApplication.pdfSidebar.isOpen && PDFViewerApplication.pdfSidebar.type === 'annotation') {
+            PDFViewerApplication.pdfSidebar.type = null;
+            PDFViewerApplication.pdfSidebar.close();
+            return;
+        }
+        showAnnotationSidebar()
+    });
+
+    $('#thunbnailToggle').on('click', function (e) {
+        if (PDFViewerApplication.pdfSidebar.isOpen && PDFViewerApplication.pdfSidebar.type === 'thumbnail') {
+            PDFViewerApplication.pdfSidebar.type = null;
+            PDFViewerApplication.pdfSidebar.close();
+            return;
+        }
+
+        showThumbnailSidebar();
+    });
+
+    document.addEventListener('documentinit', function () {
+        PDFViewerApplication.store.getMultiple({ sidebarView: -1, sidebarViewType: null }).then(cache => {
+            if (cache.sidebarViewType === 'annotation') {
+                showAnnotationSidebar();
+            } else {
+                showThumbnailSidebar();
+            }
+        })
+    }, true);
+}
+
+function showAnnotationSidebar() {
+    PDFViewerApplication.pdfSidebar.open();
+    $(this).addClass('toggled');
+    $('#thunbnailToggle').removeClass('toggled');
+    $('#thumbnailViewer').hide();
+    $('#annotationViewer').show();
+    PDFViewerApplication.pdfSidebar.type = 'annotation';
+    PDFViewerApplication.store.set('sidebarView', 1);
+    PDFViewerApplication.store.set('sidebarViewType', 'annotation');
+
+    fetchAndShowAnnotations()
+}
+
+function showThumbnailSidebar() {
+    PDFViewerApplication.pdfSidebar.open();
+    $(this).addClass('toggled');
+    $('#annotationToggle').removeClass('toggled');
+    $('#thumbnailViewer').show();
+    $('#annotationViewer').hide();
+    PDFViewerApplication.pdfSidebar.type = 'thumbnail';
+    PDFViewerApplication.store.set('sidebarViewType', 'thumbnail');
+}
+
 function updateMode() {
     $('body').addClass('mode_' + MODE);
     $('.mode-' + MODE).addClass('active');
@@ -554,6 +647,10 @@ function updateMode() {
 
 
 $(document).on('ready', function () {
+
+    // enable annotation list on sidebar
+    loadSideBarAnnotation();
+
     // load stamp list
     loadStampList();
 
