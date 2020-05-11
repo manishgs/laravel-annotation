@@ -121,7 +121,8 @@ class AnnotationController extends Controller
                     $comments[]=$comment;
                 }
             }
-            return response()->json([ 'annotationId'=> $data['id'], 'id' => $annotation->id, 'comments'=>$comments]);
+            $data_id = isset($data['id']) ? $data['id']: time();
+            return response()->json([ 'annotationId'=> $data_id, 'id' => $annotation->id, 'comments'=>$comments]);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 400);
         }
