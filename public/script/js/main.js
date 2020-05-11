@@ -226,10 +226,16 @@ function listenAnnotationEvents(event) {
         if (createdList.findIndex(a => a.id === annotation.id) === -1) {
             createdList.push(annotation);
         }
+        setTimeout(fetchAndShowAnnotations, 1000);
+    });
+
+    event.subscribe("annotationUpdated", function (annotation) {
+        setTimeout(fetchAndShowAnnotations, 1000);
     });
 
     event.subscribe("annotationDeleted", function (annotation) {
         createdList = createdList.filter(a => a.id != annotation.id);
+        setTimeout(fetchAndShowAnnotations, 1000);
     });
 }
 
@@ -263,6 +269,7 @@ function deleteAllAnnnotations() {
             $('.annotator-hl').each(function () {
                 $(this).replaceWith($(this).text());
             })
+            fetchAndShowAnnotations();
         });
     }
 }
@@ -292,6 +299,7 @@ function deleteSessionAnnotations() {
                 }
             })
             createdList.length = 0;
+            fetchAndShowAnnotations();
         });
     }
 }
@@ -587,6 +595,7 @@ function loadSideBarAnnotation() {
 
     document.addEventListener('documentinit', function () {
         PDFViewerApplication.store.getMultiple({ sidebarView: -1, sidebarViewType: null }).then(cache => {
+            if (!cache.sidebarView) return;
             if (cache.sidebarViewType === 'annotation') {
                 showAnnotationSidebar();
             } else {

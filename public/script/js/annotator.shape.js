@@ -67,7 +67,6 @@ Annotator.Plugin.Shape = (function (_super) {
         };
 
         annotator.subscribe("annotationCreated", function (annotation) {
-            console.log(annotation);
             setTimeout(function () {
                 $('.annotator-' + annotation.annotationId)
                     .attr('data-annotation-id', annotation.id)
