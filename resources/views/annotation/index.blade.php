@@ -37,7 +37,8 @@
     var PDF = {!!json_encode($pdf)!!};
     var WORKER_URL = '{{url("script/js/pdf.worker.js")}}';
     var PAGE_TITLE = 'PDF annotations';
-    var STAMPS = {!!json_encode($stamps)!!}
+    var STAMPS = {!!json_encode($stamps)!!};
+    var BASE_URL = '{{url("/")}}';
   </script>
   <script src="{{url('script/js/main.js')}}"></script>
 </head>

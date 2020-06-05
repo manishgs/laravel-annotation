@@ -4,6 +4,10 @@ $.ajaxSetup({
     }
 });
 
+function apiUrl(ep) {
+    return BASE_URL + '/' + ep.trimLeft('/');
+}
+
 
 // when page load highlight annotation
 var highlightAnnotation = null;
@@ -95,7 +99,7 @@ function saveStamp(el, data) {
     data.position = getStampPositionInPercentage(data.position, data.page);
     var req = {
         method: "POST",
-        url: "/stamp",
+        url: apiUrl("stamp"),
         data
     };
 
@@ -103,7 +107,7 @@ function saveStamp(el, data) {
         data.id = el.data('stamp').id;
         req = {
             method: "PUT",
-            url: "/stamp/" + data.id,
+            url: apiUrl("stamp/" + data.id),
             data
         }
     }
@@ -116,14 +120,16 @@ function saveStamp(el, data) {
 function deleteStamp(stamp) {
     $.ajax({
         method: "DELETE",
-        url: "/stamp/" + stamp.id,
-    }).done(function (data) { });
+        url: apiUrl("stamp/" + stamp.id),
+    }).done(function () {
+        //
+    });
 }
 
 function loadStamp(page, callback) {
     $.ajax({
         method: "GET",
-        url: "/stamp/" + PDF.id + "/" + page
+        url: apiUrl("stamp/" + PDF.id + "/" + page)
     }).done(function (data) {
         callback(data);
     });
@@ -200,7 +206,7 @@ function deleteAllAnnnotations() {
     if (confirm('Do you want to remove all annotations?')) {
         $.ajax({
             method: "DELETE",
-            url: "/annotation/" + PDF.id + "/deleteAll",
+            url: apiUrl("annotation/" + PDF.id + "/deleteAll"),
         }).done(function () {
             $('.annotator-pdf-hl').remove();
             $('.annotator-hl').each(function () {
@@ -220,7 +226,7 @@ function deleteSessionAnnotations() {
         const ids = createdList.map(a => a.id);
         $.ajax({
             method: "DELETE",
-            url: "/annotation/" + PDF.id + "/deleteAll",
+            url: apiUrl("annotation/" + PDF.id + "/deleteAll"),
             data: { id: ids }
         }).done(function () {
             $('.annotator-pdf-hl').each(function () {
@@ -247,10 +253,9 @@ function onAnnotationSearch() {
         $this.attr('data-status', 'pending');
         $.ajax({
             method: "GET",
-            url: "/annotation/" + PDF.id + "/search?q=" + q
+            url: apiUrl("annotation/" + PDF.id + "/search?q=" + q)
         }).done(function (data) {
             var str = '<ul class="annotation-list">';
-            var foundIds = [];
             data.rows.forEach(function (v) {
                 str += '<li class="item" data-page="' + v.page + '" data-id="' + v.id + '" data-annotation="' + v.id + '" ><span>' + v.page + '</span>' + v.text + '</li>'
             });
@@ -468,6 +473,91 @@ function loadAnnotations() {
 }
 
 
+<<<<<<< Updated upstream
+=======
+/* Sidebar Annotations */
+
+
+function fetchAndShowAnnotations() {
+    $.ajax({
+        method: "GET",
+        url: apiUrl("annotation/" + PDF.id + "/search")
+    }).done(function (data) {
+        var str = '<ul class="annotation-list">';
+        data.rows.sort((a, b) => a.page - b.page).forEach(function (v) {
+            str += '<li id="annotation-' + v.id + '" class="item" data-type="sidebar" data-page="' + v.page + '" data-id="' + v.id + '" data-annotation="' + v.id + '" >' +
+                '<p class="text">' + v.text + ' <strong class="page">(page ' + v.page + ')</strong></p>' +
+                '</li>'
+        });
+        str += '</ul>';
+
+        if (data.total < 1) {
+            str = "<div class='no-result'>Annotations not add yet.</div>";
+        }
+        $('#annotationViewer .count').text('(' + data.rows.length + ')');
+        $('#annotationViewer #annotationView').html(str);
+    }).fail(function () {
+        alert("Error while loading annotations.");
+    }).always(function () {
+    });
+}
+
+function loadSideBarAnnotation() {
+    $('#annotationToggle').on('click', function () {
+        if (PDFViewerApplication.pdfSidebar.isOpen && PDFViewerApplication.pdfSidebar.type === 'annotation') {
+            PDFViewerApplication.pdfSidebar.type = null;
+            PDFViewerApplication.pdfSidebar.close();
+            return;
+        }
+        showAnnotationSidebar()
+    });
+
+    $('#thunbnailToggle').on('click', function () {
+        if (PDFViewerApplication.pdfSidebar.isOpen && PDFViewerApplication.pdfSidebar.type === 'thumbnail') {
+            PDFViewerApplication.pdfSidebar.type = null;
+            PDFViewerApplication.pdfSidebar.close();
+            return;
+        }
+
+        showThumbnailSidebar();
+    });
+
+    document.addEventListener('documentinit', function () {
+        PDFViewerApplication.store.getMultiple({ sidebarView: -1, sidebarViewType: null }).then(cache => {
+            if (!cache.sidebarView) return;
+            if (cache.sidebarViewType === 'annotation') {
+                showAnnotationSidebar();
+            } else {
+                showThumbnailSidebar();
+            }
+        })
+    }, true);
+}
+
+function showAnnotationSidebar() {
+    PDFViewerApplication.pdfSidebar.open();
+    $(this).addClass('toggled');
+    $('#thunbnailToggle').removeClass('toggled');
+    $('#thumbnailViewer').hide();
+    $('#annotationViewer').show();
+    PDFViewerApplication.pdfSidebar.type = 'annotation';
+    PDFViewerApplication.store.set('sidebarView', 1);
+    PDFViewerApplication.store.set('sidebarViewType', 'annotation');
+
+    fetchAndShowAnnotations()
+}
+
+function showThumbnailSidebar() {
+    PDFViewerApplication.pdfSidebar.open();
+    $(this).addClass('toggled');
+    $('#annotationToggle').removeClass('toggled');
+    $('#thumbnailViewer').show();
+    $('#annotationViewer').hide();
+    PDFViewerApplication.pdfSidebar.type = 'thumbnail';
+    PDFViewerApplication.store.set('sidebarViewType', 'thumbnail');
+}
+
+>>>>>>> Stashed changes
 function updateMode() {
     $('body').addClass('mode_' + MODE);
     $('.mode-' + MODE).addClass('active');
