@@ -33,10 +33,14 @@ class AnnotationController extends Controller
     {
         $q = $request->get('q');
 
-        $result = Annotation::select('annotations.id', 'annotations.page', 'comments.text')
-        ->join('comments', 'comments.annotation_id', '=', 'annotations.id')
-        ->whereRaw('comments.text LIKE "%'.trim($q).'%"')
-        ->get();
+        $query = Annotation::select('annotations.id', 'annotations.page', 'comments.text')
+        ->join('comments', 'comments.annotation_id', '=', 'annotations.id');
+
+        if($q){
+            $query->whereRaw('comments.text LIKE "%'.trim($q).'%"');
+        }
+
+        $result = $query->get();
 
         $ids = [];
         $data =[];
@@ -100,22 +104,25 @@ class AnnotationController extends Controller
         try {
             $annotation = Annotation::create($input);
             $comments = [];
-            foreach ($data['comments'] as $d) {
-                $comment= Comment::create([
-                    'annotation_id' =>$annotation->id,
-                    'user_id' => \Auth::id(),
-                    'text' => $d['text']
-                ]);
-                $comment->created_date = $comment->created_at->timestamp . '000';
-                $comment->created_by = ['id'=>$comment->user->id, 'name'=>$comment->user->name];
-                unset($comment->created_at);
-                unset($comment->updated_at);
-                unset($comment->annotation_id);
-                unset($comment->user);
-                unset($comment->user_id);
-                $comments[]=$comment;
+            if(isset($data['comments'])){
+                foreach ($data['comments'] as $d) {
+                    $comment= Comment::create([
+                        'annotation_id' =>$annotation->id,
+                        'user_id' => \Auth::id(),
+                        'text' => $d['text']
+                    ]);
+                    $comment->created_date = $comment->created_at->timestamp . '000';
+                    $comment->created_by = ['id'=>$comment->user->id, 'name'=>$comment->user->name];
+                    unset($comment->created_at);
+                    unset($comment->updated_at);
+                    unset($comment->annotation_id);
+                    unset($comment->user);
+                    unset($comment->user_id);
+                    $comments[]=$comment;
+                }
             }
-            return response()->json(['id' => $annotation->id, 'comments'=>$comments]);
+            $data_id = isset($data['id']) ? $data['id']: time();
+            return response()->json([ 'annotationId'=> $data_id, 'id' => $annotation->id, 'comments'=>$comments]);
         } catch (\Exception $e) {
             return response()->json(['status' => 'error', 'message' => $e->getMessage()], 400);
         }
@@ -205,9 +212,16 @@ class AnnotationController extends Controller
         return response()->json(['status' => 'error', 'message' => 'Could not find the annotation.'], 400);
     }
 
-    public function deleteAll($id)
+    public function deleteAll($id, Request $request)
     {
-        Annotation::where('pdf_id', $id)->delete();
+        $annotations = $request->get('id');
+
+        if($annotations){
+            Annotation::where('pdf_id', $id)->whereIn('id', $annotations)->delete();
+        }else{
+            Annotation::where('pdf_id', $id)->delete();
+        }
+
         return response()->json(['status' => 'OK']);
     }
 }

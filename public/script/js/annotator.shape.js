@@ -66,7 +66,14 @@ Annotator.Plugin.Shape = (function (_super) {
             }
         };
 
-        annotator.subscribe("annotationCreated", enableDragableResizable);
+        annotator.subscribe("annotationCreated", function (annotation) {
+            setTimeout(function () {
+                $('.annotator-' + annotation.annotationId)
+                    .attr('data-annotation-id', annotation.id)
+                    .addClass('annotator-' + annotation.id);
+                enableDragableResizable(annotation)
+            }, 200)
+        });
 
         annotator.subscribe("annotationsLoaded", function (annotations) {
             boxEl.find('div.annotator-hl').remove();
@@ -101,21 +108,21 @@ Annotator.Plugin.Shape = (function (_super) {
             $(annotator.viewer.element).addClass('annotator-hide');
 
             if (e.type == 'resizestop') {
-                $(e.target).css('height', (el.height() + 'px'));
-                $(e.target).css('width', (el.width() + 'px'));
+                el.css('height', (el.height() + 'px'));
+                el.css('width', (el.width() + 'px'));
             }
 
-            var shape = [];
+            var shape = {};
             shape.top = el.offset().top;
             shape.left = el.offset().left;
             shape.height = el.height();
             shape.width = el.width();
 
             disableAnnotation();
-            $(e.target).find('div.annotator-resize-action').remove();
+            el.find('div.annotator-resize-action').remove();
             boxEl.find('div.annotator-hl').removeClass('resizable-active');
-            $(e.target).addClass('resizable-active');
-            $(e.target).append(self.resizeButtons());
+            el.addClass('resizable-active');
+            el.append(self.resizeButtons());
             var hl = el.find('div.annotator-hl').draggable("option", "disabled", true);
             boxEl.find('div.annotator-hl').draggable({ disabled: true });
             boxEl.find(e.target).draggable({ disabled: false });

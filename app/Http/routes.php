@@ -17,7 +17,10 @@ Route::get('/', function () {
 
 Route::auth();
 
-Route::get('/home', 'HomeController@index');
+Route::get('/home',function(){
+    return redirect('/annotation/1');
+});
+
 Route::get('/annotation', 'AnnotationController@list');
 Route::get('/annotation/{id}/search', 'AnnotationController@search');
 Route::delete('/annotation/{id}/deleteAll', 'AnnotationController@deleteAll');

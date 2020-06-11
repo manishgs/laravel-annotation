@@ -1,33 +1,46 @@
  <div id="outerContainer">
+           <!-- sidebarContainer -->
               <div id="sidebarContainer">
-                <div id="toolbarSidebar">
-                  <div class="splitToolbarButton toggled">
-                    <button id="viewThumbnail" class="toolbarButton toggled" title="Show Thumbnails" tabindex="2"
-                      data-l10n-id="thumbs">
-                      <span data-l10n-id="thumbs_label">Thumbnails</span>
-                    </button>
-                    <button id="viewOutline" class="toolbarButton"
-                      title="Show Document Outline (double-click to expand/collapse all items)" tabindex="3"
-                      data-l10n-id="document_outline">
-                      <span data-l10n-id="document_outline_label">Document Outline</span>
-                    </button>
-                    <button id="viewAttachments" class="toolbarButton" title="Show Attachments" tabindex="4"
-                      data-l10n-id="attachments">
-                      <span data-l10n-id="attachments_label">Attachments</span>
-                    </button>
-                  </div>
+                <div id="annotationViewer">
+                   <div id="toolbarSidebar">
+                      <div class="splitToolbarButton">
+                       Annotations <span class="count"></span>
+                      </div>
+                    </div>
+                    <div id="annotationView">
+                    </div>
                 </div>
-                <div id="sidebarContent">
-                  <div id="thumbnailView">
-                  </div>
-                  <div id="outlineView" class="hidden">
-                  </div>
-                  <div id="attachmentsView" class="hidden">
-                  </div>
-                </div>
-                <div id="sidebarResizer" class="hidden"></div>
-              </div> <!-- sidebarContainer -->
 
+                <div id="thumbnailViewer">
+                    <div id="toolbarSidebar">
+                      <div class="splitToolbarButton toggled">
+                        <button id="viewThumbnail" class="toolbarButton toggled" title="Show Thumbnails" tabindex="2"
+                          data-l10n-id="thumbs">
+                          <span data-l10n-id="thumbs_label">Thumbnails</span>
+                        </button>
+                        <button id="viewOutline" class="toolbarButton"
+                          title="Show Document Outline (double-click to expand/collapse all items)" tabindex="3"
+                          data-l10n-id="document_outline">
+                          <span data-l10n-id="document_outline_label">Document Outline</span>
+                        </button>
+                        <button id="viewAttachments" class="toolbarButton" title="Show Attachments" tabindex="4"
+                          data-l10n-id="attachments">
+                          <span data-l10n-id="attachments_label">Attachments</span>
+                        </button>
+                      </div>
+                    </div>
+                    <div id="sidebarContent">
+                      <div id="thumbnailView">
+                      </div>
+                      <div id="outlineView" class="hidden">
+                      </div>
+                      <div id="attachmentsView" class="hidden">
+                      </div>
+                    </div>
+                    <div id="sidebarResizer" class="hidden"></div>
+                </div>
+              </div> 
+              
               <div id="mainContainer">
                 <div class="findbar hidden doorHanger" id="findbar">
                   <div id="findbarInputContainer">
@@ -161,9 +174,13 @@
                   <div id="toolbarContainer">
                     <div id="toolbarViewer">
                       <div id="toolbarViewerLeft">
-                        <button id="sidebarToggle" class="toolbarButton" title="Toggle Sidebar" tabindex="11"
+                      <span id="sidebarToggle"></span>
+                        <button id="thunbnailToggle" class="toolbarButton" title="Toggle Sidebar" tabindex="11"
                           data-l10n-id="toggle_sidebar">
                           <span data-l10n-id="toggle_sidebar_label">Toggle Sidebar</span>
+                        </button>
+                        <button id="annotationToggle" class="toolbarButton" title="Toggle Annotation" tabindex="111">
+                            <img src="{{url('script/images/annotation.png')}}" style="height: 16px;" />
                         </button>
                         <div class="toolbarButtonSpacer"></div>
                         <button id="viewFind" class="toolbarButton" title="Find in Document" tabindex="12" data-l10n-id="findbar">
@@ -211,13 +228,28 @@
                         </button>
                       </div>
                       <div id="toolbarViewerMiddle">
-                        <input id="annotationFindInput" style="width: 150px;" class="toolbarField" title="Find"
-                          placeholder="Search Annotations" />
+                        <input id="annotationFindInput" 
+                          autocomplete="off" 
+                          style="width: 150px;" 
+                          class="toolbarField" title="Find"
+                          placeholder="Search Annotations" />s
                         <div class="findbar annotationsearchList doorHanger" id="findbar">
                         </div>
-                        <button title="Delete all annotation" class="toolbarButton deleteAnnotations">
-                          <img src="{{url('script/images/trash.svg')}}" style="height: 12px;" />
-                        </button>
+                        
+                         <div style="position:relative">
+                            <button title="Delete annotation" class="toolbarButton deleteAnnotations">
+                              <img src="{{url('script/images/trash.svg')}}" style="height: 12px;" />
+                            </button>
+
+                            <div class="findbar doorHanger annotation-delete-option" id="findbar"
+                              style="display:none; position: absolute; left:0px; min-width: 285px;">
+                              <ul class="annotation-option-list">
+                                <li data-action="all">All annotations</li>
+                                <li data-action="session">Created during this session</li>
+                              </ul>
+                            </div>
+                        </div>
+
                         <button title="Text annotation" data-mode="text" class="toolbarButton toggleMode mode-text">
                           <img src="{{url('script/images/text.svg')}}" style="height: 12px;" />
                         </button>
