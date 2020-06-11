@@ -483,6 +483,7 @@ background: #313131;
     padding: 5px 10px 0;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
+    background: #3f3f3f;
 }
 
 #annotationView .no-result{
