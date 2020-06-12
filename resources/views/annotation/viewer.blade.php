@@ -232,7 +232,7 @@
                           autocomplete="off" 
                           style="width: 150px;" 
                           class="toolbarField" title="Find"
-                          placeholder="Search Annotations" />s
+                          placeholder="Search Annotations" />
                         <div class="findbar annotationsearchList doorHanger" id="findbar">
                         </div>
                         
