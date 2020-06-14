@@ -430,7 +430,7 @@ function loadAnnotations() {
             if (data.rows && data.rows.length) {
                 data.rows.forEach(function (v) {
                     var stamp = $(getStampTemplate(getStampUrlById(v.stamp_image_id)));
-                    stamp.append('<span>by ' + v.created_by.name + ' <br/> ' + getDateFormat(v.created_date) + ' </span>')
+                    stamp.append('<span>By ' + v.created_by.name + ' <br/> ' + v.created_date + ' </span>')
                     v.position = getposition(v.position, v.page);
                     var div = renderStamp(v.position, stamp, v.stamp_image_id);
                     div.data('stamp', v);
