@@ -644,7 +644,7 @@ function showAnnotationSidebar() {
     $(document).on('click', '.annotation-remove', function (e) {
         e.preventDefault();
         const id = $(this).data('id');
-        if (confirm('Are you sure, you want to delete this annotations?')) {
+        if (confirm('Are you sure, you want to delete this annotation?')) {
             $('.annotator-hl').each(function () {
                 const annotation = $(this).data('annotation');
                 if (annotation.id === id) {
