@@ -16,10 +16,10 @@ class CreateAnnotationsTable extends Migration
             $table->increments('id');
             $table->integer('pdf_id')->index();
             $table->integer('page')->index();
-            $table->string('properties');
-            $table->string('ranges')->nullable();
-            $table->string('shapes')->nullable();
-            $table->string('quote')->nullable();
+            $table->text('properties');
+            $table->text('ranges')->nullable();
+            $table->text('shapes')->nullable();
+            $table->text('quote')->nullable();
             $table->integer('created_by')->index();
             $table->integer('updated_by')->index()->nullable();
             $table->timestamps();
