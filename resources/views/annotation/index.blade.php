@@ -39,19 +39,15 @@
     var PAGE_TITLE = 'PDF annotations';
     var STAMPS = {!!json_encode($stamps)!!};
     var BASE_URL = '{{url("/")}}';
+    var STAMPS_TEXTS = {!!json_encode($stamps_text)!!}
   </script>
   <script src="{{url('script/js/main.js')}}"></script>
 </head>
   <body tabindex="1" class="loadingInProgress">
     <div class="container container-annotation" >
-      <div class="row" >
-            <div class="col-sm-2" style="background:#ccc; height: 100%; padding:0px; z-index:999">
-                <!-- left menu goes here  this menu contains the details about the pdf and the particular documents like filesize, filename, depatment, document no, document name etc -->
-            </div>
-            <div class="col-sm-10" style="height: 100%; position: relative; padding:0px;">
+       <div style="background:#ccc; height: 100%; padding:0px; z-index:999">
                 @include('annotation.viewer')
-            </div>
-     </div>
+      </div>
     </div>
   </body>
 </html>
