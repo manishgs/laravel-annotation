@@ -153,8 +153,6 @@
  }
 
  .annotation-list li {
-     cursor: pointer;
-     padding: 10px;
      float: none !important;
      border-bottom: 1px solid #313030;
      display: flex;
@@ -166,7 +164,15 @@
      /* fallback */
      max-height: 30px;
      /* fallback */
+     position: relative;
  }
+
+ .annotation-list li .item{
+    cursor: pointer;
+    padding: 10px;
+ }
+
+
 
  .annotation-list li span {
      padding: 10px;
@@ -489,4 +495,24 @@ background: #313131;
 #annotationView .no-result{
     color: #cacaca;
     font-size: 13px;
+}
+
+.annotation-remove{
+    height: 11px;
+    width: 11px;
+    position: absolute;
+    background: #b4432e;
+    padding: 4px;
+    border-radius: 50%;
+    display: none;
+    right: 10px;
+    bottom: 10px;
+}
+
+.annotation-list li:hover img.annotation-remove{
+    display: block;
+}
+
+.annotation-list img.annotation-remove:hover {
+    cursor: pointer;
 }

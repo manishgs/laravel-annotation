@@ -10,6 +10,7 @@ function apiUrl(ep) {
 
 // when page load highlight annotation
 var highlightAnnotation = null;
+var createdList = [];
 
 /* 
     Helper Functions
@@ -221,7 +222,6 @@ function getStampRatio(type) {
 
 
 /* Annotations */
-let createdList = [];
 function listenAnnotationEvents(event) {
     event.subscribe("annotationCreated", function (annotation) {
         if (createdList.findIndex(a => a.id === annotation.id) === -1) {
@@ -269,7 +269,8 @@ function deleteAllAnnnotations() {
             $('.annotator-pdf-hl').remove();
             $('.annotator-hl').each(function () {
                 $(this).replaceWith($(this).text());
-            })
+            });
+            createdList.length = 0;
             fetchAndShowAnnotations();
         });
     }
@@ -283,26 +284,32 @@ function deleteSessionAnnotations() {
 
     if (confirm('Do you want to remove ' + createdList.length + ' annotations created during this session?')) {
         const ids = createdList.map(a => a.id);
-        $.ajax({
-            method: "DELETE",
-            url: apiUrl("annotation/" + PDF.id + "/deleteAll"),
-            data: { id: ids }
-        }).done(function () {
-            $('.annotator-pdf-hl').each(function () {
-                if (ids.includes($(this).data('annotation').id)) {
-                    $(this.remove());
-                }
-            });
-
-            $('.annotator-hl').each(function () {
-                if (ids.includes($(this).data('annotation').id)) {
-                    $(this).replaceWith($(this).text());
-                }
-            })
+        deleteAnnotationsByIds(ids, function () {
             createdList.length = 0;
-            fetchAndShowAnnotations();
         });
     }
+}
+
+function deleteAnnotationsByIds(ids, cb) {
+    $.ajax({
+        method: "DELETE",
+        url: apiUrl("annotation/" + PDF.id + "/deleteAll"),
+        data: { id: ids }
+    }).done(function () {
+        $('.annotator-pdf-hl').each(function () {
+            if (ids.includes($(this).data('annotation').id)) {
+                $(this.remove());
+            }
+        });
+
+        $('.annotator-hl').each(function () {
+            if (ids.includes($(this).data('annotation').id)) {
+                $(this).replaceWith($(this).text());
+            }
+        })
+        cb();
+        fetchAndShowAnnotations();
+    });
 }
 
 
@@ -430,7 +437,7 @@ function loadAnnotations() {
             if (data.rows && data.rows.length) {
                 data.rows.forEach(function (v) {
                     var stamp = $(getStampTemplate(getStampUrlById(v.stamp_image_id)));
-                    stamp.append('<span>by ' + v.created_by.name + ' <br/> ' + getDateFormat(v.created_date) + ' </span>')
+                    stamp.append('<span>By ' + v.created_by.name + ' <br/> ' + v.created_date + ' </span>')
                     v.position = getposition(v.position, v.page);
                     var div = renderStamp(v.position, stamp, v.stamp_image_id);
                     div.data('stamp', v);
@@ -549,6 +556,16 @@ function loadAnnotations() {
 
 /* Sidebar Annotations */
 
+function truncate(str) {
+    const words = str.split(" ");
+    const limit = 20;
+    if (words.length <= limit) {
+        return words.join(" ");
+    }
+
+    return words.splice(0, 20).join(" ") + '...';
+}
+
 
 function fetchAndShowAnnotations() {
     $.ajax({
@@ -557,8 +574,14 @@ function fetchAndShowAnnotations() {
     }).done(function (data) {
         var str = '<ul class="annotation-list">';
         data.rows.sort((a, b) => a.page - b.page).forEach(function (v) {
-            str += '<li id="annotation-' + v.id + '" class="item" data-type="sidebar" data-page="' + v.page + '" data-id="' + v.id + '" data-annotation="' + v.id + '" >' +
-                '<p class="text">' + v.text + ' <strong class="page">(page ' + v.page + ')</strong></p>' +
+            str += '<li id="annotation-' + v.id + '" >' +
+                '<div class="item" data-type="sidebar" data-page="' + v.page + '" data-id="' + v.id + '" data-annotation="' + v.id + '">' +
+                '<p class="text">' +
+                truncate(v.text) +
+                ' <strong class="page">(page ' + v.page + ')</strong>' +
+                '</p>' +
+                '</div>' +
+                '<img src="/script/images/trash.svg" class="annotation-remove" data-id="' + v.id + '"   />' +
                 '</li>'
         });
         str += '</ul>';
@@ -616,7 +639,22 @@ function showAnnotationSidebar() {
     PDFViewerApplication.store.set('sidebarView', 1);
     PDFViewerApplication.store.set('sidebarViewType', 'annotation');
 
-    fetchAndShowAnnotations()
+    fetchAndShowAnnotations();
+
+    $(document).on('click', '.annotation-remove', function (e) {
+        e.preventDefault();
+        const id = $(this).data('id');
+        if (confirm('Are you sure, you want to delete this annotation?')) {
+            $('.annotator-hl').each(function () {
+                const annotation = $(this).data('annotation');
+                if (annotation.id === id) {
+                    deleteAnnotationsByIds([id], function () {
+                        createdList = createdList.filter(a => a.id != annotation.id);
+                    });
+                }
+            })
+        }
+    });
 }
 
 function showThumbnailSidebar() {

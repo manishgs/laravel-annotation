@@ -94,11 +94,10 @@ Annotator.Plugin.Properties = (function (_super) {
                         var html = '<ul style="padding:0px; margin:15px 0px 10px; list-style:none">';
                         annotation.comments.forEach(function (comment, i) {
                             if (comment.text) {
-                                var date = moment(parseInt(comment.created_date));
                                 html += '<li data-id="' + i + '" style="padding:10px 10px 10px 15px">' +
                                     '<span style="color:#404040">' + comment.text + '</span><p style="margin-top:5px">By ' +
                                     (comment.created_by ? comment.created_by.name : '') + ' <br/> ' +
-                                    date.format('h:m a, MMM D, Y') +
+                                    comment.created_date +
                                     '</p> <span class="annotator-item-controls">' +
                                     '<button title="Edit Comment" class="annotator-edit">Edit</button>' +
                                     '<button title="Delete Comment" class="annotator-comment-delete">Delete</button>' +

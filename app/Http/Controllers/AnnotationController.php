@@ -67,7 +67,7 @@ class AnnotationController extends Controller
         $annotations=[];
         foreach ($data as $annotation) {
             foreach ($annotation->comments as &$comment) {
-                $comment->created_date = $comment->created_at->timestamp . '000';
+                $comment->created_date = $comment->created_at->format('h:i a, M d, Y');
                 $comment->created_by = ['id'=>$comment->user->id, 'name'=>$comment->user->name];
                 unset($comment->created_at);
                 unset($comment->updated_at);
@@ -111,7 +111,7 @@ class AnnotationController extends Controller
                         'user_id' => \Auth::id(),
                         'text' => $d['text']
                     ]);
-                    $comment->created_date = $comment->created_at->timestamp . '000';
+                    $comment->created_date = $comment->created_at->format('h:i a, M d, Y');
                     $comment->created_by = ['id'=>$comment->user->id, 'name'=>$comment->user->name];
                     unset($comment->created_at);
                     unset($comment->updated_at);
@@ -177,7 +177,7 @@ class AnnotationController extends Controller
                         'text' => $d['text']
                         ]);
                 }
-                $comment->created_date = $comment->created_at->timestamp . '000';
+                $comment->created_date = $comment->created_at->format('h:i a, M d, Y');
                 $comment->created_by = ['id'=>$comment->user->id, 'name'=>$comment->user->name];
                 unset($comment->created_at);
                 unset($comment->updated_at);

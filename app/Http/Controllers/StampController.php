@@ -18,7 +18,7 @@ class StampController extends Controller
         $stamps =[];
         foreach ($data as $stamp) {
             $stamp->created_by = ['id'=>$stamp->creator->id, 'name'=>$stamp->creator->name];
-            $stamp->created_date = $stamp->created_at->timestamp . '000';
+            $stamp->created_date = $stamp->created_at->format('h:i a, M d, Y');
             unset($stamp->creator);
             unset($stamp->created_at);
             unset($stamp->updated_at);
@@ -48,7 +48,7 @@ class StampController extends Controller
             ];
             $stamp = Stamp::create($stamp);
             $stamp->created_by = ['id'=>\Auth::user()->id, 'name'=>\Auth::user()->name];
-            $stamp->created_date = $stamp->created_at->timestamp . '000';
+            $stamp->created_date = $stamp->created_at->format('h:i a, M d, Y');
             unset($stamp->created_at);
             unset($stamp->updated_at);
             unset($stamp->updated_by);
