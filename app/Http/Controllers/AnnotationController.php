@@ -8,6 +8,11 @@ use App\Comment;
 
 class AnnotationController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     public function index($id)
     {
         // Todo- get pdf detail by user id
@@ -68,7 +73,7 @@ class AnnotationController extends Controller
         foreach ($data as $annotation) {
             foreach ($annotation->comments as &$comment) {
                 $comment->created_date = $comment->created_at->format('h:i a, M d, Y');
-                $comment->created_by = ['id'=>$comment->user->id, 'name'=>$comment->user->name];
+                $comment->created_by = ['id'=>$comment->user->id, 'name'=>$comment->user->name]; // name => user's full name
                 unset($comment->created_at);
                 unset($comment->updated_at);
                 unset($comment->annotation_id);
@@ -112,7 +117,7 @@ class AnnotationController extends Controller
                         'text' => $d['text']
                     ]);
                     $comment->created_date = $comment->created_at->format('h:i a, M d, Y');
-                    $comment->created_by = ['id'=>$comment->user->id, 'name'=>$comment->user->name];
+                    $comment->created_by = ['id'=>$comment->user->id, 'name'=>$comment->user->name];  // name => user's full name
                     unset($comment->created_at);
                     unset($comment->updated_at);
                     unset($comment->annotation_id);
@@ -178,7 +183,7 @@ class AnnotationController extends Controller
                         ]);
                 }
                 $comment->created_date = $comment->created_at->format('h:i a, M d, Y');
-                $comment->created_by = ['id'=>$comment->user->id, 'name'=>$comment->user->name];
+                $comment->created_by = ['id'=>$comment->user->id, 'name'=>$comment->user->name]; // name => user's full name
                 unset($comment->created_at);
                 unset($comment->updated_at);
                 unset($comment->annotation_id);

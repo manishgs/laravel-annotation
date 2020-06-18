@@ -17,7 +17,7 @@ class StampController extends Controller
         $data = Stamp::with('creator')->where('pdf_id', $pdf)->where('page', $page)->get();
         $stamps =[];
         foreach ($data as $stamp) {
-            $stamp->created_by = ['id'=>$stamp->creator->id, 'name'=>$stamp->creator->name];
+            $stamp->created_by = ['id'=>$stamp->creator->id, 'name'=>$stamp->creator->name]; // name => user's full name
             $stamp->created_date = $stamp->created_at->format('h:i a, M d, Y');
             unset($stamp->creator);
             unset($stamp->created_at);

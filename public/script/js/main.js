@@ -504,7 +504,7 @@ function loadAnnotations() {
                     height: getStampRatio(stampType) * width
                 }
 
-                draggable.append('<span>by ' + USER.name + ' <br/> ' + getDateFormat(Date.now()) + ' </span>')
+                draggable.append('<span>by ' + USERNAME + ' <br/> ' + getDateFormat(Date.now()) + ' </span>')
                 var div = renderStamp(position, draggable, stampType);
                 droppable.parent().prepend(div);
                 const data = {
