@@ -182,7 +182,6 @@
                         <button id="annotationToggle" class="toolbarButton" title="Toggle Annotation" tabindex="111">
                             <img src="{{url('script/images/annotation.png')}}" style="height: 16px;" />
                         </button>
-                        <div class="toolbarButtonSpacer"></div>
                         <button id="viewFind" class="toolbarButton" title="Find in Document" tabindex="12" data-l10n-id="findbar">
                           <span data-l10n-id="findbar_label">Find</span>
                         </button>
@@ -191,7 +190,6 @@
                             data-l10n-id="previous">
                             <span data-l10n-id="previous_label">Previous</span>
                           </button>
-                          <div class="splitToolbarButtonSeparator"></div>
                           <button class="toolbarButton pageDown" title="Next Page" id="next" tabindex="14" data-l10n-id="next">
                             <span data-l10n-id="next_label">Next</span>
                           </button>
@@ -230,7 +228,6 @@
                       <div id="toolbarViewerMiddle">
                         <input id="annotationFindInput" 
                           autocomplete="off" 
-                          style="width: 150px;" 
                           class="toolbarField" title="Find"
                           placeholder="Search Annotations" />
                         <div class="findbar annotationsearchList doorHanger" id="findbar">
