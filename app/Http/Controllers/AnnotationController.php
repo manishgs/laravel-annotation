@@ -99,9 +99,9 @@ class AnnotationController extends Controller {
             foreach ($annotation->comments as &$comment) {
 
                 @$comment->created_date = $comment->created_at->format('h:i a, M d, Y');
-                @$comment->created_by = ['id' => @$comment->user->id, 'name' => @$comment->user->username];
+                @$comment->created_by = ['id' => @$comment->user->id, 'name' => @$comment->user->user_full_name];
                 //add the "name" property to the user object
-                @$comment->user->name = @$comment->user->username;
+                @$comment->user->name = @$comment->user->user_full_name;
                 unset($comment->created_at);
                 unset($comment->updated_at);
                 unset($comment->annotation_id);
@@ -148,7 +148,7 @@ class AnnotationController extends Controller {
                     ]);
 
                     $comment->created_date = $comment->created_at->format('h:i a, M d, Y');
-                    $comment->created_by = ['id' => $comment->user->id, 'username' => $comment->user->username];
+                    $comment->created_by = ['id' => $comment->user->id, 'username' => $comment->user->user_full_name];
                     unset($comment->created_at);
                     unset($comment->updated_at);
                     unset($comment->annotation_id);
@@ -213,7 +213,7 @@ class AnnotationController extends Controller {
                     ]);
                 }
                 $comment->created_date = $comment->created_at->format('h:i a, M d, Y');
-                $comment->created_by = ['id' => $comment->user->id, 'username' => $comment->user->username];
+                $comment->created_by = ['id' => $comment->user->id, 'username' => $comment->user->user_full_name];
                 unset($comment->created_at);
                 unset($comment->updated_at);
                 unset($comment->annotation_id);

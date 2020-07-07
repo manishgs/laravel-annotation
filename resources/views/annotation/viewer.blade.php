@@ -117,7 +117,6 @@ foreach (@$bookmarklist as $key => $bList) {
                 title="Find the previous occurrence of the phrase" tabindex="92" data-l10n-id="find_previous">
                 <span data-l10n-id="find_previous_label">Previous</span>
               </button>
-              <div class="splitToolbarButtonSeparator"></div>
               <button id="findNext" class="toolbarButton findNext" title="Find the next occurrence of the phrase"
                 tabindex="93" data-l10n-id="find_next">
                 <span data-l10n-id="find_next_label">Next</span>
@@ -249,7 +248,6 @@ foreach (@$bookmarklist as $key => $bList) {
                         <button id="annotationToggle" class="toolbarButton" title="Toggle Annotation" tabindex="111">
                             <img src="{{url('script/images/annotation.png')}}" style="height: 16px;" />
                 </button>
-                <div class="toolbarButtonSpacer"></div>
                 <button id="viewFind" class="toolbarButton" title="Find in Document" tabindex="12" data-l10n-id="findbar">
                   <span data-l10n-id="findbar_label">Find</span>
                 </button>
@@ -304,7 +302,6 @@ foreach (@$bookmarklist as $key => $bList) {
               <div id="toolbarViewerMiddle">
                         <input id="annotationFindInput"
                           autocomplete="off"
-                          style="width: 150px;"
                           class="toolbarField" title="Find"
                           placeholder="Search Annotations" />
                 <div class="findbar annotationsearchList doorHanger" id="findbar">

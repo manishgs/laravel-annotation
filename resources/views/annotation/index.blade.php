@@ -32,7 +32,8 @@
   <script src="{{url('script/js/viewer.js')}}"></script>
   <script src="{{url('script/js/spectrum.js')}}"></script>
   <script>
-    var USER = {!!json_encode(Auth::user())!!};
+    var USER = "{{Auth::user()->user_full_name}}"; // user's full name
+    var USERNAME = "{{Auth::user()->user_full_name}}"; // user's full name
     var MODE = 'text';
     var PDF = {!!json_encode($pdf)!!};
     var WORKER_URL = '{{url("script/js/pdf.worker.js")}}';

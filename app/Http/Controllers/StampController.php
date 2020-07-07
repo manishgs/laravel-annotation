@@ -64,7 +64,7 @@ class StampController extends Controller {
                 'stamp_image_id' => $data['stamp_image_id'],
             ];
             $stamp = Stamp::create($stamp);
-            $stamp->created_by = ['id' => \Auth::user()->id, 'username' => \Auth::user()->username];
+            $stamp->created_by = ['id' => \Auth::user()->id, 'username' => \Auth::user()->user_full_name];
             $stamp->created_date = $stamp->created_at->format('h:i a, M d, Y');
             unset($stamp->created_at);
             unset($stamp->updated_at);
