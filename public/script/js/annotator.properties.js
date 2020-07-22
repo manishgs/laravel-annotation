@@ -47,7 +47,20 @@ var updateProperties = function (annotation) {
         }
 
         if (properties['redaction']) {
-            el.css({ 'background-color': 'black' })
+            el.addClass('redaction')
+            // check permission to show/hide text
+            if (1 == 1) {
+                var button = $("<a href='#' class='redaction-toggle'>Show</a>");
+                button.on('click', function () {
+                    el.toggleClass('redaction');
+                    if ($(this).text() == 'Show') {
+                        $(this).text('Hide')
+                    } else {
+                        $(this).text('Show')
+                    }
+                });
+                el.append(button);
+            }
         } else if (properties['highlightColor']) {
             el.css({ 'background-color': properties['highlightColor'] })
         } else {
@@ -165,7 +178,7 @@ Annotator.Plugin.Properties = (function (_super) {
                     if (annotation.comments && annotation.comments[annotation.isComment.id]) {
                         annotation.comments[annotation.isComment.id].text = annotation.text;
                     } else {
-                        comment = { text: annotation.text, added_by: USER, added_at: Date.now() };
+                        comment = { text: annotation.text, added_by: USERNAME, added_at: Date.now() };
                         if (!annotation.comments) {
                             annotation.comments = [comment];
                         } else {

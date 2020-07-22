@@ -541,3 +541,35 @@ background: #313131;
 #toolbarViewerLeft{
     margin-left: 4px;
 }
+
+.annotator-hl{
+    position: relative;
+}
+
+.redaction-toggle{
+    position: absolute;
+    bottom: -26px;
+    right: 0px;
+    color: #ddd;
+    background: #117451;
+    padding: 5px;
+    width: 48px;
+    border-radius: 10px;
+    text-align: center;
+    display: none;
+}
+
+a.redaction-toggle{
+    text-decoration: none;
+    color: #fff;
+}
+
+.annotator-hl:hover>.redaction-toggle, .redaction-toggle:hover{
+    display: block;
+}
+
+.redaction{
+    background-color: black !important
+}
+
+
