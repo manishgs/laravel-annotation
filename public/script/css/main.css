@@ -153,7 +153,6 @@
  }
 
  .annotation-list li {
-
      float: none !important;
      border-bottom: 1px solid #313030;
      display: flex;
@@ -168,10 +167,12 @@
      position: relative;
  }
 
- .annotation-list li .item {
-     cursor: pointer;
-     padding: 10px;
+ .annotation-list li .item{
+    cursor: pointer;
+    padding: 10px;
  }
+
+
 
  .annotation-list li span {
      padding: 10px;
@@ -207,16 +208,16 @@
      overflow: hidden;
  }
 
- .stamp .delete-stamp {
-     top: 5px;
-     position: absolute;
-     right: 5px;
+.stamp .delete-stamp {
+    top: 5px;
+    position: absolute;
+    right: 5px;
      width: 20px;
      display: none;
      background: #ff8080;
-     padding: 2px 4px;
-     border-radius: 2px;
- }
+    padding: 2px 4px;
+    border-radius: 2px;
+}
 
 
  .stamp:hover .delete-stamp {
@@ -226,8 +227,7 @@
      margin-top: 0px;
      cursor: pointer;
  }
-
- .stamp:hover .delete-stamp img {
+ .stamp:hover .delete-stamp img{
      max-width: 100%;
  }
 
@@ -240,7 +240,6 @@
      font-style: italic;
      font-size: 22px;
      letter-spacing: 1px;
-     line-height: 20px;
  }
 
  .stamp-list li {
@@ -248,14 +247,13 @@
      list-style: none;
  }
 
- .stamp-list li img {
-     width: 80px;
- }
+ .stamp-list li img{
+    width: 80px;
+}
 
  .stamp .stamp-block,
- .stamp-select.ui-draggable-dragging .stamp-item {
+ .stamp-select.ui-draggable-dragging .stamp-item{
      text-align: left;
-
  }
 
  .stamp .stamp-block img,
@@ -263,11 +261,10 @@
      width: 100%;
  }
 
- .stamp-block:hover {
-     cursor: move;
- }
-
- .stamp-block span {
+  .stamp-block:hover{
+      cursor: move;
+  }
+  .stamp-block span {
      display: block;
      font-size: 14px;
      text-transform: none;
@@ -281,31 +278,25 @@
      padding: 5px;
  }
 
- .stamp-text span {
-     margin-top: 5px;
- }
+.stamp-text span{
+    margin-top:5px;
+}
 
-
- .stamp-text {
+.stamp-text{
      padding: 10px;
      color: #203654;
      background: rgb(228, 233, 216);
      background: linear-gradient(90deg, rgb(227, 232, 242) 0%, rgb(112, 138, 192) 100%);
      border: 1px solid #203654;
-     height: 100%;
+    height: 100%;
  }
 
- .annotator-wrapper .stamp-text {
-
-     font-size: 30px;
+.stamp-text p {
+    font-size:30px;
+    margin: 0px;
  }
 
- .stamp-text p {
-     font-size: 30px;
-     margin: 0px;
- }
-
- /*
+/*
  .stamp-approved {
      color: #28381a;
      background: rgb(228, 233, 216);
@@ -382,189 +373,203 @@
      z-index: 9999 !important;
  }
 
- .pdfViewer .page {
-     box-sizing: initial;
-     -webkit-box-sizing: initial;
- }
+.pdfViewer .page {
+    box-sizing: initial;
+    -webkit-box-sizing: initial;
+}
 
- .container-annotation,
- .container-annotation .row {
-     width: 100%;
-     height: 100%;
-     position: relative;
-     margin: 0px;
-     padding: 0px
- }
+.container-annotation, .container-annotation .row{
+  width: 100%; height: 100%; position: relative; margin:0px; padding:0px
+}
+.annotation-option-list{
+    list-style: none;
+    margin:0px -5px;
+}
+.annotation-option-list li {
+    padding: 8px;
+    display: block;
+    width: 100%;
+    cursor: pointer;
+}
 
- .annotation-option-list {
-     list-style: none;
-     margin: 0px -5px;
- }
-
- .annotation-option-list li {
-     padding: 8px;
-     display: block;
-     width: 100%;
-     cursor: pointer;
- }
-
- .annotation-option-list li:hover {
-     background-color: #3e3b3b;
- }
+.annotation-option-list li:hover {
+    background-color:#3e3b3b;
+}
 
  .stamp .ui-resizable-s {
-     display: none !important;
- }
+    display: none !important;
+}
 
- .stamp-resizable-helper {
-     border: 1px solid #649496;
-     background: #def2f54d;
-     padding: 20px;
-     border-radius: 0px !important;
-     z-index: 9999 !important;
- }
+.stamp-resizable-helper{
+    border: 1px solid #649496;
+    background: #def2f54d;
+    padding: 20px;
+    border-radius: 0px !important;
+    z-index: 9999 !important;
+}
 
 
- .stamp.ui-resizable {
-     height: auto !important;
- }
+.stamp.ui-resizable{
+    height: auto !important;
+}
 
- #sidebarContainer * {
-     -webkit-box-sizing: initial;
-     -moz-box-sizing: initial;
-     box-sizing: initial;
- }
+#sidebarContainer * {
+    -webkit-box-sizing: initial;
+    -moz-box-sizing: initial;
+    box-sizing: initial;
+}
 
- #sidebarContainer .thumbnail {
-     padding: 0px;
-     background-color: transparent;
-     border: none;
- }
+#sidebarContainer .thumbnail{
+    padding: 0px;
+    background-color: transparent;
+    border: none;
+}
 
- #sidebarContainer .thumbnail:not([data-loaded]) {
-     border: 1px dashed rgba(255, 255, 255, 0.5);
- }
+#sidebarContainer .thumbnail:not([data-loaded]) {
+    border: 1px dashed rgba(255, 255, 255, 0.5);
+  }
 
- html[dir='ltr'] .toolbarButton#thunbnailToggle::before {
-     content: url(../images/toolbarButton-sidebarToggle.png);
- }
+html[dir='ltr'] .toolbarButton#thunbnailToggle::before {
+    content: url(../images/toolbarButton-sidebarToggle.png);
+}
+html[dir='rtl'] .toolbarButton#thunbnailToggle::before {
+    content: url(../images/toolbarButton-sidebarToggle-rtl.png);
+}
+    
+#annotationViewer, #thumbnailViewer {
+    display: none;
+}    
 
- html[dir='rtl'] .toolbarButton#thunbnailToggle::before {
-     content: url(../images/toolbarButton-sidebarToggle-rtl.png);
- }
+.loading {
+    font-size: 12px;
+    color: #fff;
+    text-align: center;
+    margin: 25px;
+}
 
- #annotationViewer,
- #thumbnailViewer {
-     display: none;
- }
+#annotationViewer .annotation-list {
+    color: #fff;
+    max-height: max-content;
+    margin:0px;
+}
 
- .loading {
-     font-size: 12px;
-     color: #fff;
-     text-align: center;
-     margin: 25px;
- }
+#annotationViewer .annotation-list li{
+    max-height: max-content;
+    flex-direction: column;
+}
 
- #annotationViewer .annotation-list {
-     color: #fff;
-     max-height: max-content;
-     margin: 0px;
- }
+#annotationViewer .annotation-list li p.text{
+    font-size: 13px;
+    line-height: 16px;
+    color: #bfbfbf;
+}
 
- #annotationViewer .annotation-list li {
-     max-height: max-content;
-     flex-direction: column;
- }
+#annotationViewer .annotation-list li p.page{
+    color: #dadada;
+    font-size: 11px;
+    font-weight: bold;
+    margin:0px;
+}
 
- #annotationViewer .annotation-list li p.text {
-     font-size: 13px;
-     line-height: 16px;
-     color: #bfbfbf;
- }
+#annotationViewer .annotation-list li:hover, #annotationViewer .annotation-list li.active{
+background: #313131;
+}
 
- #annotationViewer .annotation-list li p.page {
-     color: #dadada;
-     font-size: 11px;
-     font-weight: bold;
-     margin: 0px;
- }
+#annotationViewer .splitToolbarButton{
+    color: #fff;
+    line-height: 24px;
+    margin-left: 10px;
+}
 
- #annotationViewer .annotation-list li:hover,
- #annotationViewer .annotation-list li.active {
-     background: #313131;
- }
+#annotationView{
+    position: absolute;
+    width: calc(100% - 20px);
+    top: 30px;
+    bottom: 0;
+    padding: 5px 10px 0;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    background: #3f3f3f;
+}
 
- #annotationViewer .splitToolbarButton {
-     color: #fff;
-     line-height: 24px;
-     margin-left: 10px;
- }
+#annotationView .no-result{
+    color: #cacaca;
+    font-size: 13px;
+}
 
- #annotationView {
-     position: absolute;
-     width: calc(100% - 20px);
-     top: 30px;
-     bottom: 0;
-     padding: 5px 10px 0;
-     overflow: auto;
-     -webkit-overflow-scrolling: touch;
-     background: #3f3f3f;
+.annotation-remove{
+    height: 11px;
+    width: 11px;
+    position: absolute;
+    background: #b4432e;
+    padding: 4px;
+    border-radius: 50%;
+    display: none;
+    right: 10px;
+    bottom: 10px;
+}
 
- }
+.annotation-list li:hover img.annotation-remove{
+    display: block;
+}
 
- #annotationView .no-result {
-     color: #cacaca;
-     font-size: 13px;
- }
+.annotation-list img.annotation-remove:hover {
+    cursor: pointer;
+}
 
- .annotation-remove {
-     height: 11px;
-     width: 11px;
-     position: absolute;
-     background: #b4432e;
-     padding: 4px;
-     border-radius: 50%;
-     display: none;
-     right: 10px;
-     bottom: 10px;
- }
+@media only screen and (max-width: 1200px) {
+    #toolbarViewerMiddle {
+        position: relative !important;
+        left: inherit !important;
+        -webkit-transform: inherit !important;
+        transform: inherit !important;
+    }
+}
 
- .annotation-list li:hover img.annotation-remove {
-     display: block;
- }
+.toolbarButton, .dropdownToolbarButton, .secondaryToolbarButton, .overlayButton {
+    padding:0px;
+    line-height: 13px;
+}
+.toolbarButton, .secondaryToolbarButton, .overlayButton{
+    width: 25px;
+}
 
- .annotation-list img.annotation-remove:hover {
-     cursor: pointer;
- }
+.toolbarButton::before, .secondaryToolbarButton::before{
+    left: 3px;
+}
 
- @media only screen and (max-width: 1200px) {
-     #toolbarViewerMiddle {
-         position: relative !important;
-         left: inherit !important;
-         -webkit-transform: inherit !important;
-         transform: inherit !important;
-     }
- }
+#toolbarViewerLeft{
+    margin-left: 4px;
+}
 
- .toolbarButton,
- .dropdownToolbarButton,
- .secondaryToolbarButton,
- .overlayButton {
-     padding: 0px;
-     line-height: 13px;
- }
+.annotator-hl{
+    position: relative;
+}
 
- .toolbarButton,
- .secondaryToolbarButton,
- .overlayButton {
-     width: 25px;
- }
+.redaction-toggle{
+    position: absolute;
+    bottom: -26px;
+    right: 0px;
+    color: #ddd;
+    background: #117451;
+    padding: 5px;
+    width: 48px;
+    border-radius: 10px;
+    text-align: center;
+    display: none;
+}
 
- .toolbarButton::before,
- .secondaryToolbarButton::before {
-     left: 3px;
- }
+a.redaction-toggle{
+    text-decoration: none;
+    color: #fff;
+}
 
- #toolbarViewerLeft {
-     margin-left: 4px;
- }
+.annotator-hl:hover>.redaction-toggle, .redaction-toggle:hover{
+    display: block;
+}
+
+.redaction{
+    background-color: black !important
+}
+
+
