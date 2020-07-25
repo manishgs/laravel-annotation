@@ -5,7 +5,8 @@ $.ajaxSetup({
 });
 
 function apiUrl(ep) {
-    return BASE_URL + '/' + ep.trimLeft('/');
+    if (!ep) return BASE_URL;
+    return BASE_URL + '/' + ep.trim();
 }
 
 // when page load highlight annotation
@@ -468,7 +469,7 @@ function loadAnnotations() {
         content.annotator('addPlugin', 'Properties');
         content.annotator('addPlugin', 'Shape');
         content.annotator('addPlugin', 'Store', {
-            prefix: '/annotation',
+            prefix: apiUrl('annotation'),
             annotationData: {
                 'pdf_id': PDF.id,
                 'page': num
