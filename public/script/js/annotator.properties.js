@@ -50,16 +50,13 @@ var updateProperties = function (annotation) {
             el.addClass('redaction')
             // check permission to show/hide text
             if (1 == 1) {
-                var button = $("<a href='#' class='redaction-toggle'>Show</a>");
+                var button = $("<a href='#' class='redaction-toggle'></a>");
                 button.on('click', function () {
                     el.toggleClass('redaction');
-                    if ($(this).text() == 'Show') {
-                        $(this).text('Hide')
-                    } else {
-                        $(this).text('Show')
-                    }
+                    $(this).toggleClass('icon-hide');
                 });
-                el.append(button);
+                $(el[el.length - 1]).append(button);
+                console.log(el);
             }
         } else if (properties['highlightColor']) {
             el.css({ 'background-color': properties['highlightColor'] })
