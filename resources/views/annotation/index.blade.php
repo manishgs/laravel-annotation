@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html dir="ltr" mozdisallowselectionprint>
-
 <head>
   <meta charset="utf-8">
   <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -20,6 +19,23 @@
 
   <script src="{{url('script/js/pdf.js')}}"></script>
   <script src="{{url('script/js/jquery.min.js')}}"></script>
+
+   <script>
+    var USER = "{{Auth::user()->user_full_name}}"; // user's full name
+    var USERNAME = "{{Auth::user()->user_full_name}}"; // user's full name
+    var MODE = 'text';
+    var PDF = {!!json_encode($pdf)!!};
+    var WORKER_URL = '{{url("script/js/pdf.worker.js")}}';
+    var PAGE_TITLE = 'PDF annotations';
+    var STAMPS = {!!json_encode($stamps)!!};
+    var BASE_URL = '{{url("/")}}';
+    var STAMPS_TEXTS = {!!json_encode($stamps_text)!!}
+   console.log("BASE_URL-->"+BASE_URL);
+   var annotation_permission = "{{module_user_permission_given(7, "annotation") }}";
+   var redaction_permission = "{{module_user_permission_given(7, "redaction") }}";
+    console.log("%c annotation_permission-->"+annotation_permission,"color:cyan");
+     console.log("%c redaction_permission-->"+redaction_permission,"color:yellow");
+  </script>
   <!-- Latest compiled JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
   <script src="{{url('script/js/annotator.min.js')}}"></script>
@@ -31,17 +47,6 @@
   <script src="{{url('script/js/annotator.properties.js')}}"></script>
   <script src="{{url('script/js/viewer.js')}}"></script>
   <script src="{{url('script/js/spectrum.js')}}"></script>
-  <script>
-    var USER = "{{Auth::user()->user_full_name}}"; // user's full name
-    var USERNAME = "{{Auth::user()->user_full_name}}"; // user's full name
-    var MODE = 'text';
-    var PDF = {!!json_encode($pdf)!!};
-    var WORKER_URL = '{{url("script/js/pdf.worker.js")}}';
-    var PAGE_TITLE = 'PDF annotations';
-    var STAMPS = {!!json_encode($stamps)!!};
-    var BASE_URL = '{{url("/")}}';
-    var STAMPS_TEXTS = {!!json_encode($stamps_text)!!}
-  </script>
   <script src="{{url('script/js/main.js')}}"></script>
 </head>
   <body tabindex="1" class="loadingInProgress">

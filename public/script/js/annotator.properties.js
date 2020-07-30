@@ -1,4 +1,6 @@
 var updateProperties = function(annotation) {
+    console.log("%c redaction_permission inside annotator.properties.js -->" + redaction_permission, "color:magenta");
+
     var el, type;
     if (annotation.highlights) {
         el = $(annotation.highlights);
@@ -50,13 +52,16 @@ var updateProperties = function(annotation) {
             el.addClass('redaction')
             // check permission to show/hide text
             if (1 == 1) {
-                var button = $("<a href='#' class='redaction-toggle'></a>");
-                button.on('click', function() {
-                    el.toggleClass('redaction');
-                    $(this).toggleClass('icon-hide');
-                });
-                $(el[el.length - 1]).append(button);
-                console.log(el);
+                if (redaction_permission) {
+                    var button = $("<a href='#' class='redaction-toggle'></a>");
+                    button.on('click', function() {
+                        el.toggleClass('redaction');
+                        $(this).toggleClass('icon-hide');
+                    });
+                    $(el[el.length - 1]).append(button);
+                    console.log(el);
+                }
+
             }
         } else if (properties['highlightColor']) {
             el.css({ 'background-color': properties['highlightColor'] })

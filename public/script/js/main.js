@@ -24,10 +24,10 @@ var baseurl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split
 
 function debounce(func, wait, immediate) {
     var timeout;
-    return function () {
+    return function() {
         var context = this,
             args = arguments;
-        var later = function () {
+        var later = function() {
             timeout = null;
             if (!immediate) func.apply(context, args);
         };
@@ -66,7 +66,7 @@ function loadStampList() {
     $(".stamp-select").draggable({
         helper: 'clone',
         cursor: 'move',
-        drag: function (e) {
+        drag: function(e) {
             var el = $(e.target).parent().find('.ui-draggable-dragging .stamp-item');
             $(el).find('*').css({ zoom: PDFViewerApplication.pdfViewer._currentScale })
         },
@@ -94,7 +94,7 @@ function loadStampListText() {
 }
 
 function getStampUrlById(id) {
-    var stamps = STAMPS.filter(function (s) {
+    var stamps = STAMPS.filter(function(s) {
         return s.id === id;
     });
 
@@ -174,7 +174,7 @@ function saveStamp(el, data) {
         }
     }
 
-    $.ajax(req).done(function (data) {
+    $.ajax(req).done(function(data) {
         if (Object.keys(data).length > 1) {
             el.data('stamp', data);
         }
@@ -185,14 +185,14 @@ function deleteStamp(stamp) {
     $.ajax({
         method: "DELETE",
         url: apiUrl("stamp/" + stamp.id),
-    }).done(function (data) { });
+    }).done(function(data) {});
 }
 
 function loadStamp(page, callback) {
     $.ajax({
         method: "GET",
         url: apiUrl("stamp/" + PDF.id + "/" + page)
-    }).done(function (data) {
+    }).done(function(data) {
         callback(data);
     });
 }
@@ -231,7 +231,7 @@ function renderStamp(shape, draggable, type) {
     div.css(shape);
     div.html(draggable);
     var trash = $('<div class="delete-stamp"><img src="/script/images/trash.svg" /></div>');
-    trash.on('click', function () {
+    trash.on('click', function() {
         var stamp = $(this).parent().data('stamp');
         $(this).parent().remove();
         if (stamp) {
@@ -261,7 +261,7 @@ function stampDraggable(el, data) {
 }
 
 function updateStampChange(data) {
-    return function (e, ele) {
+    return function(e, ele) {
         var el = $(e.target);
         var position = {};
         var width = parseInt(el.css('width').replace('px', ''));
@@ -299,18 +299,18 @@ function getDateFormat(timestamp) {
 
 
 function listenAnnotationEvents(event) {
-    event.subscribe("annotationCreated", function (annotation) {
+    event.subscribe("annotationCreated", function(annotation) {
         if (createdList.findIndex(a => a.id === annotation.id) === -1) {
             createdList.push(annotation);
         }
         setTimeout(fetchAndShowAnnotations, 1000);
     });
 
-    event.subscribe("annotationUpdated", function (annotation) {
+    event.subscribe("annotationUpdated", function(annotation) {
         setTimeout(fetchAndShowAnnotations, 1000);
     });
 
-    event.subscribe("annotationDeleted", function (annotation) {
+    event.subscribe("annotationDeleted", function(annotation) {
         createdList = createdList.filter(a => a.id != annotation.id);
         setTimeout(fetchAndShowAnnotations, 1000);
     });
@@ -318,11 +318,11 @@ function listenAnnotationEvents(event) {
 
 function deleteAnnotations() {
     // toggle delete options
-    $('.deleteAnnotations').on('click', function () {
+    $('.deleteAnnotations').on('click', function() {
         $('.annotation-delete-option').toggle();
     });
 
-    $('.annotation-option-list li').on('click', function () {
+    $('.annotation-option-list li').on('click', function() {
         const action = $(this).data('action');
         if (action === 'all') {
             deleteAllAnnnotations()
@@ -341,9 +341,9 @@ function deleteAllAnnnotations() {
         $.ajax({
             method: "DELETE",
             url: apiUrl("annotation/" + PDF.id + "/deleteAll"),
-        }).done(function () {
+        }).done(function() {
             $('.annotator-pdf-hl').remove();
-            $('.annotator-hl').each(function () {
+            $('.annotator-hl').each(function() {
                 $(this).replaceWith($(this).text());
             });
             createdList.length = 0;
@@ -360,7 +360,7 @@ function deleteSessionAnnotations() {
 
     if (confirm('Do you want to remove ' + createdList.length + ' annotations created during this session?')) {
         const ids = createdList.map(a => a.id);
-        deleteAnnotationsByIds(ids, function () {
+        deleteAnnotationsByIds(ids, function() {
             createdList.length = 0;
         });
     }
@@ -371,14 +371,14 @@ function deleteAnnotationsByIds(ids, cb) {
         method: "DELETE",
         url: apiUrl("annotation/" + PDF.id + "/deleteAll"),
         data: { id: ids }
-    }).done(function () {
-        $('.annotator-pdf-hl').each(function () {
+    }).done(function() {
+        $('.annotator-pdf-hl').each(function() {
             if (ids.includes($(this).data('annotation').id)) {
                 $(this.remove());
             }
         });
 
-        $('.annotator-hl').each(function () {
+        $('.annotator-hl').each(function() {
             if (ids.includes($(this).data('annotation').id)) {
                 $(this).replaceWith($(this).text());
             }
@@ -397,10 +397,10 @@ function onAnnotationSearch() {
         $.ajax({
             method: "GET",
             url: apiUrl("annotation/" + PDF.id + "/search?q=" + q)
-        }).done(function (data) {
+        }).done(function(data) {
             var str = '<ul class="annotation-list">';
             var foundIds = [];
-            data.rows.forEach(function (v) {
+            data.rows.forEach(function(v) {
                 str += '<li class="item" data-page="' + v.page + '" data-id="' + v.id + '" data-annotation="' + v.id + '" ><span>' + v.page + '</span>' + v.text + '</li>'
             });
             str += '</ul>';
@@ -410,9 +410,9 @@ function onAnnotationSearch() {
             }
 
             $('.annotationsearchList').show().html(str);
-        }).fail(function () {
+        }).fail(function() {
             alert("Error while annotation search.");
-        }).always(function () {
+        }).always(function() {
             $this.attr('data-status', '');
         });
 
@@ -425,7 +425,7 @@ function onAnnotationSearch() {
 
 function annotationSearch() {
     // show annotations search result when click on input when result is present
-    $('#annotationFindInput').on('click', function () {
+    $('#annotationFindInput').on('click', function() {
         if ($('.annotationsearchList').find('li').length) {
             $('.annotationsearchList').show();
         } else {
@@ -438,7 +438,7 @@ function annotationSearch() {
 
 
     // when click on other than annoation list then hide the list
-    $(document).mouseup(function (e) {
+    $(document).mouseup(function(e) {
         var container = $('.annotationsearchList');
         if (!container.is(e.target) && container.has(e.target).length === 0) {
             container.hide();
@@ -450,7 +450,8 @@ function annotationSearch() {
 
 function showAnnotationWhenClick() {
     // when click on annotation show annotation pop
-    $(document).on('click', '.annotation-list .item', function () {
+    $(document).on('click', '.annotation-list .item', function() {
+
         $('.annotation-list .item').removeClass('active');
         $(this).addClass('active');
         if ($(this).data('type') === 'sidebar') {
@@ -470,7 +471,7 @@ function showAnnotationWhenClick() {
         const content = $('#viewer').find('.page:nth-child(' + page + ')');
         var found = false;
         if (content.find('.canvasWrapper').length) {
-            content.find('.annotator-hl').each(function (i, a) {
+            content.find('.annotator-hl').each(function(i, a) {
                 var a = $(this);
                 var annotation = a.data('annotation');
                 if (!found && annotation.id == id) {
@@ -504,7 +505,7 @@ function showAnnotationWhenClick() {
 
 function loadAnnotations() {
     // load annotation when pdf text render
-    document.addEventListener('pagerendered', function (event) {
+    document.addEventListener('pagerendered', function(event) {
         const num = event.detail.pageNumber;
         const content = $('#viewer').find('.page:nth-child(' + num + ')');
 
@@ -544,7 +545,8 @@ function loadAnnotations() {
     });
 
     // text is rendered
-    document.addEventListener('textlayerrendered', function (event) {
+    document.addEventListener('textlayerrendered', function(event) {
+        console.log("document.addEventListener('textlayerrendered'");
         const num = event.detail.pageNumber;
         const content = $('#viewer').find('.page:nth-child(' + num + ')');
         // destory annotation is already loaded
@@ -555,7 +557,7 @@ function loadAnnotations() {
         // init annotation
         content.annotator();
         // for pdf annotations
-        content.data('annotator').setupAnnotation = function (annotation) {
+        content.data('annotator').setupAnnotation = function(annotation) {
             if (annotation.ranges !== undefined || $.isEmptyObject(annotation)) {
                 return content.data('annotator').__proto__.setupAnnotation.call(content.data('annotator'), annotation);
             }
@@ -584,7 +586,7 @@ function loadAnnotations() {
         content.find('.annotator-wrapper').droppable({
             accept: '.stamp-select',
             activeClass: "drop-area",
-            drop: function (e, ui) {
+            drop: function(e, ui) {
                 var droppable = $(this);
                 var draggable = ui.draggable.clone();
                 draggable = draggable.find('.stamp-item');
@@ -617,10 +619,10 @@ function loadAnnotations() {
         });
 
         // when annotation loaded
-        content.data('annotator').subscribe("annotationsLoaded", function (annotation) {
+        content.data('annotator').subscribe("annotationsLoaded", function(annotation) {
             // highlight annotation
             if (annotation.length && highlightAnnotation && highlightAnnotation.page === num) {
-                annotation.forEach(function (annotation) {
+                annotation.forEach(function(annotation) {
                     if (highlightAnnotation.id === annotation.id) {
                         var el = annotation.highlights ? $(annotation.highlights) : $('.annotator-' + annotation.id);
                         var position = el.offset();
@@ -663,6 +665,9 @@ function truncate(str) {
 
 
 function fetchAndShowAnnotations() {
+    var trash_icon = apiUrl("script/images/trash.svg");
+    console.log("trash_icon-->" + trash_icon);
+    console.log("%c annotation_permission inside main.js fetchAndShowAnnotations -->" + annotation_permission, "color:#0cff00");
     $.ajax({
         method: "GET",
         url: apiUrl("annotation/" + PDF.id + "/search")
@@ -679,9 +684,13 @@ function fetchAndShowAnnotations() {
                 truncate(v.text) +
                 ' <strong class="page">(page ' + v.page + ')</strong>' +
                 '</p>' +
-                '</div>' +
-                '<img src="/script/images/trash.svg" class="annotation-remove" data-id="' + v.id + '"   />' +
-                '</li>'
+                '</div>';
+            //show annotation remove button to authorizxed users only
+            if (annotation_permission) {
+                str += '<img src="' + trash_icon + '" class="annotation-remove" data-id="' + v.id + '"   />';
+            }
+
+            str += '</li>';
         });
         str += '</ul>';
 
@@ -690,14 +699,13 @@ function fetchAndShowAnnotations() {
         }
         $('#annotationViewer .count').text('(' + data.rows.length + ')');
         $('#annotationViewer #annotationView').html(str);
-    }).fail(function () {
+    }).fail(function() {
         alert("Error while loading annotations.");
-    }).always(function () {
-    });
+    }).always(function() {});
 }
 
 function loadSideBarAnnotation() {
-    $('#annotationToggle').on('click', function () {
+    $('#annotationToggle').on('click', function() {
         if (PDFViewerApplication.pdfSidebar.isOpen && PDFViewerApplication.pdfSidebar.type === 'annotation') {
             PDFViewerApplication.pdfSidebar.type = null;
             PDFViewerApplication.pdfSidebar.close();
@@ -706,7 +714,7 @@ function loadSideBarAnnotation() {
         showAnnotationSidebar()
     });
 
-    $('#thunbnailToggle').on('click', function (e) {
+    $('#thunbnailToggle').on('click', function(e) {
         if (PDFViewerApplication.pdfSidebar.isOpen && PDFViewerApplication.pdfSidebar.type === 'thumbnail') {
             PDFViewerApplication.pdfSidebar.type = null;
             PDFViewerApplication.pdfSidebar.close();
@@ -716,7 +724,7 @@ function loadSideBarAnnotation() {
         showThumbnailSidebar();
     });
 
-    document.addEventListener('documentinit', function () {
+    document.addEventListener('documentinit', function() {
         PDFViewerApplication.store.getMultiple({ sidebarView: -1, sidebarViewType: null }).then(cache => {
             if (!cache.sidebarView) return;
             if (cache.sidebarViewType === 'annotation') {
@@ -729,6 +737,8 @@ function loadSideBarAnnotation() {
 }
 
 function showAnnotationSidebar() {
+    console.log("%c annotation_permission inside main.js showAnnotationSidebar -->" + annotation_permission, "color:green");
+
     PDFViewerApplication.pdfSidebar.open();
     $(this).addClass('toggled');
     $('#thunbnailToggle').removeClass('toggled');
@@ -740,14 +750,14 @@ function showAnnotationSidebar() {
 
     fetchAndShowAnnotations();
 
-    $(document).on('click', '.annotation-remove', function (e) {
+    $(document).on('click', '.annotation-remove', function(e) {
         e.preventDefault();
         const id = $(this).data('id');
         if (confirm('Are you sure, you want to delete this annotation?')) {
-            $('.annotator-hl').each(function () {
+            $('.annotator-hl').each(function() {
                 const annotation = $(this).data('annotation');
                 if (annotation.id === id) {
-                    deleteAnnotationsByIds([id], function () {
+                    deleteAnnotationsByIds([id], function() {
                         createdList = createdList.filter(a => a.id != annotation.id);
                     });
                 }
@@ -773,7 +783,7 @@ function updateMode() {
 
 
     // toggle mode
-    $('.toggleMode').on('click', function (e) {
+    $('.toggleMode').on('click', function(e) {
         e.preventDefault();
         if ($(this).data('mode') === 'text') {
             MODE = 'text';
@@ -794,7 +804,7 @@ function updateMode() {
 }
 
 
-$(document).on('ready', function () {
+$(document).on('ready', function() {
 
     // enable annotation list on sidebar
     loadSideBarAnnotation();
@@ -804,14 +814,14 @@ $(document).on('ready', function () {
     loadStampListText();
 
     // when click on delete annotation
-    Annotator.Viewer.prototype.onDeleteClick = function (event) {
+    Annotator.Viewer.prototype.onDeleteClick = function(event) {
         if (confirm('Do you want to delete this annotation along with comments?')) {
             return this.onButtonClick(event, "delete")
         }
     };
 
     // toggle show stamp list
-    $('.botton-stamp').on('click', function () {
+    $('.botton-stamp').on('click', function() {
         $('.stamp-collection').toggle();
     });
 
@@ -821,13 +831,13 @@ $(document).on('ready', function () {
     })
 
     // update worker url and pdf url
-    document.addEventListener('load', function () {
+    document.addEventListener('load', function() {
         PDFViewerApplicationOptions.set('workerSrc', WORKER_URL);
         PDFViewerApplicationOptions.set('defaultUrl', PDF.url);
     }, true);
 
     // update page title
-    document.addEventListener('documentloaded', function (params) {
+    document.addEventListener('documentloaded', function(params) {
         PDFViewerApplication.setTitle(PAGE_TITLE);
     });
 
@@ -906,6 +916,7 @@ $(document).on('ready', function () {
 
     // when click on annotation show annotation pop
     $(document).on('click', '.annotation-list .item', function() {
+        console.log("$(document).on('click', '.annotation-list .item', function() {");
         $('.annotator-viewer').addClass('annotator-hide');
         $('.annotationsearchList').hide();
         var id = $(this).data('id');

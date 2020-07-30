@@ -1,5 +1,7 @@
 <?php
 $user_permission = Auth::user()->user_permission;
+$annotation_permission = module_user_permission_given(7, "annotation");
+$redaction_permission = module_user_permission_given(7, "redaction");
 ?>
 @if(stristr($user_permission,"download"))
 <script>
@@ -306,6 +308,8 @@ foreach (@$bookmarklist as $key => $bList) {
                           placeholder="Search Annotations" />
                 <div class="findbar annotationsearchList doorHanger" id="findbar">
                 </div>
+                 {{-- checking module and user permissioon start --}}
+                @if($annotation_permission)
                          <div style="position:relative">
                             <button title="Delete annotation" class="toolbarButton deleteAnnotations">
                   <img src="{{url('script/images/trash.svg')}}" style="height: 12px;" />
@@ -318,16 +322,19 @@ foreach (@$bookmarklist as $key => $bList) {
                               </ul>
                             </div>
                         </div>
+
                 <button title="Text annotation" data-mode="text" class="toolbarButton toggleMode mode-text">
                   <img src="{{url('script/images/text.svg')}}" style="height: 12px;" />
                 </button>
                 <div class="splitToolbarButtonSeparator"></div>
+
                 <button title="Draw rectangle" data-mode="rectangle" class="toolbarButton toggleMode mode-shape">
                   <img src="{{url('script/images/rectangle.svg')}}" style="height: 12px;" />
                 </button>
                 <button title="Draw circle" data-mode="circle" class="toolbarButton toggleMode mode-shape">
                   <img src="{{url('script/images/circle.svg')}}" style="height: 12px;" />
                 </button>
+
                 <div style="position:relative">
                           <button title="Insert stamp" class="toolbarButton botton-stamp">
                     <img src="{{url('script/images/stamp.png')}}" style="height: 16px;" />
@@ -348,6 +355,8 @@ foreach (@$bookmarklist as $key => $bList) {
                     </ul>
                   </div>
                 </div>
+                 @endif
+                 {{-- checking module and user permissioon end --}}
                 <!-- digital signature -->
                 <!-- <div style="position:relative">
                   <button title="Digitally Signed" class="toolbarButton botton-stamp-text">
