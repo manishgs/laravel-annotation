@@ -47,7 +47,17 @@ var updateProperties = function (annotation) {
         }
 
         if (properties['redaction']) {
-            el.css({ 'background-color': 'black' })
+            el.addClass('redaction')
+            // check permission to show/hide text
+            if (1 == 1) {
+                var button = $("<a href='#' class='redaction-toggle'></a>");
+                button.on('click', function () {
+                    el.toggleClass('redaction');
+                    $(this).toggleClass('icon-hide');
+                });
+                $(el[el.length - 1]).append(button);
+                console.log(el);
+            }
         } else if (properties['highlightColor']) {
             el.css({ 'background-color': properties['highlightColor'] })
         } else {
@@ -96,7 +106,7 @@ Annotator.Plugin.Properties = (function (_super) {
                             if (comment.text) {
                                 html += '<li data-id="' + i + '" style="padding:10px 10px 10px 15px">' +
                                     '<span style="color:#404040">' + comment.text + '</span><p style="margin-top:5px">By ' +
-                                    (comment.created_by ? comment.created_by.name : '') + ' <br/> ' +
+                                    (comment.created_by ? comment.created_by.username : '') + ' <br/> ' +
                                     comment.created_date +
                                     '</p> <span class="annotator-item-controls">' +
                                     '<button title="Edit Comment" class="annotator-edit">Edit</button>' +
@@ -165,7 +175,7 @@ Annotator.Plugin.Properties = (function (_super) {
                     if (annotation.comments && annotation.comments[annotation.isComment.id]) {
                         annotation.comments[annotation.isComment.id].text = annotation.text;
                     } else {
-                        comment = { text: annotation.text, added_by: USER, added_at: Date.now() };
+                        comment = { text: annotation.text, added_by: USERNAME, added_at: Date.now() };
                         if (!annotation.comments) {
                             annotation.comments = [comment];
                         } else {

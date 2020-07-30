@@ -541,3 +541,38 @@ background: #313131;
 #toolbarViewerLeft{
     margin-left: 4px;
 }
+
+.annotator-hl{
+    position: relative;
+}
+
+.redaction-toggle{
+    height: 18px;
+    position: absolute;
+    bottom: -20px;
+    right: 0px;
+    padding: 5px;
+    width: 25px;
+    text-align: center;
+    background-image: url(../images/eye.png);
+    background-repeat: no-repeat;
+    background-size: 53%;
+    background-position: center;
+    background-color: #cee3ff;
+    border-radius: 4px;
+}
+
+.redaction-toggle.icon-hide{
+    background-image: url(../images/eye-slash.png);
+}
+
+a.redaction-toggle{
+    text-decoration: none;
+    color: #fff;
+}
+
+.redaction{
+    background-color: black !important
+}
+
+
