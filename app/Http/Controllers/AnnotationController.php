@@ -34,11 +34,11 @@ class AnnotationController extends Controller
         return view('annotation.index', compact('pdf', 'stamps'));
     }
 
-    public function search($id, Request $request)
+    public function search($pdf_id, Request $request)
     {
         $q = $request->get('q');
 
-        $query = Annotation::select('annotations.id', 'annotations.page', 'comments.text')
+        $query = Annotation::select('annotations.id', 'annotations.page', 'comments.text')->where('pdf_id', $pdf_id)
         ->join('comments', 'comments.annotation_id', '=', 'annotations.id');
 
         if($q){

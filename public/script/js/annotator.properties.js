@@ -118,7 +118,7 @@ Annotator.Plugin.Properties = (function (_super) {
                             if (comment.text) {
                                 html += '<li data-id="' + i + '" style="padding:10px 10px 10px 15px">' +
                                     '<span style="color:#404040">' + comment.text + '</span><p style="margin-top:5px">By ' +
-                                    (comment.created_by ? comment.created_by.username : '') + ' <br/> ' +
+                                    (comment.created_by ? comment.created_by.name : '') + ' <br/> ' +
                                     comment.created_date +
                                     '</p> <span class="annotator-item-controls">' +
                                     '<button title="Edit Comment" class="annotator-edit">Edit</button>' +

@@ -184,7 +184,29 @@
      text-align: center;
  }
 
- .annotator-resize-action {
+ #toolbarViewerMiddle  .annotation-list li span {
+    margin: 0px 11px 0px 0px;
+    padding: 0px;
+    width: 37px;
+}
+
+
+#toolbarViewerMiddle  .annotation-list li{
+    height: 45px;
+    line-height: 29px;
+}
+
+#toolbarViewerMiddle .annotation-list{
+    margin-bottom: 0px;
+    margin-left: -5px;
+}
+
+#toolbarViewerMiddle .annotation-list li:hover{
+    background:#343333;
+    cursor: pointer;
+}
+
+.annotator-resize-action {
      float: left;
  }
 
