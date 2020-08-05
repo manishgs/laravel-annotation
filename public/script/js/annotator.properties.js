@@ -67,7 +67,6 @@ Annotator.Plugin.Properties = (function (_super) {
         var self = this;
         this.annotator.subscribe("annotationCreated", updateProperties);
         this.annotator.subscribe("annotationUpdated", updateProperties);
-        this.annotator.subscribe("annotationUpdated", updateProperties);
         this.annotator.subscribe("annotationEditorHidden", function (editor) {
             delete editor.annotation.text;
             delete editor.annotation.isComment;
@@ -141,7 +140,7 @@ Annotator.Plugin.Properties = (function (_super) {
                                 var id = parent.data('id');
                                 annotation.comments = annotation.comments.filter((v, i) => i !== id);
                                 parent.remove();
-                                self.annotator.plugins.Store.annotationUpdated(annotation);
+                                self.annotator.publish('annotationUpdated', annotation);
                                 self.annotator.viewer.hide();
                             }
                         })
