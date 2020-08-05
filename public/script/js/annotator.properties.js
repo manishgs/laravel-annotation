@@ -48,16 +48,6 @@ var updateProperties = function (annotation) {
 
         if (properties['redaction']) {
             el.addClass('redaction')
-            // check permission to show/hide text
-            if (1 == 1) {
-                var button = $("<a href='#' class='redaction-toggle'></a>");
-                button.on('click', function () {
-                    el.toggleClass('redaction');
-                    $(this).toggleClass('icon-hide');
-                });
-                $(el[el.length - 1]).append(button);
-                console.log(el);
-            }
         } else if (properties['highlightColor']) {
             el.css({ 'background-color': properties['highlightColor'] })
         } else {
@@ -98,6 +88,28 @@ Annotator.Plugin.Properties = (function (_super) {
                     annotation.isComment = true;
                 });
                 $(field).parent().find('.annotator-controls').prepend(div);
+
+                // check permission to show/hide text
+                if (annotation.highlights && annotation['properties']['redaction']) {
+                    var redaction = $('<button title="Show redaction" class="redaction-toggle"></button>');
+                    redaction.on('click', function () {
+                        $(annotation.highlights).toggleClass('redaction');
+                        $(this).toggleClass('icon-hide');
+                        if (redaction.prop('title') === 'Show redaction') {
+                            redaction.prop('title', 'Hide redaction')
+                        } else {
+                            redaction.prop('title', 'Show redaction')
+                        }
+                    });
+
+                    if (!$(annotation.highlights).hasClass('redaction')) {
+                        redaction.toggleClass('icon-hide');
+                        redaction.prop('title', 'Hide redaction')
+                    }
+
+                    $(field).parent().find('.annotator-controls').prepend(redaction);
+                }
+
                 if (annotation.comments && annotation.comments.length) {
                     annotation.comments = annotation.comments.filter(c => c.text);
                     if (annotation.comments.length) {
@@ -106,7 +118,7 @@ Annotator.Plugin.Properties = (function (_super) {
                             if (comment.text) {
                                 html += '<li data-id="' + i + '" style="padding:10px 10px 10px 15px">' +
                                     '<span style="color:#404040">' + comment.text + '</span><p style="margin-top:5px">By ' +
-                                    (comment.created_by ? comment.created_by.username : '') + ' <br/> ' +
+                                    (comment.created_by ? comment.created_by.name : '') + ' <br/> ' +
                                     comment.created_date +
                                     '</p> <span class="annotator-item-controls">' +
                                     '<button title="Edit Comment" class="annotator-edit">Edit</button>' +

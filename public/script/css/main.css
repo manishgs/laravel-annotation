@@ -184,7 +184,29 @@
      text-align: center;
  }
 
- .annotator-resize-action {
+ #toolbarViewerMiddle  .annotation-list li span {
+    margin: 0px 11px 0px 0px;
+    padding: 0px;
+    width: 37px;
+}
+
+
+#toolbarViewerMiddle  .annotation-list li{
+    height: 45px;
+    line-height: 29px;
+}
+
+#toolbarViewerMiddle .annotation-list{
+    margin-bottom: 0px;
+    margin-left: -5px;
+}
+
+#toolbarViewerMiddle .annotation-list li:hover{
+    background:#343333;
+    cursor: pointer;
+}
+
+.annotator-resize-action {
      float: left;
  }
 
@@ -547,28 +569,14 @@ background: #313131;
 }
 
 .redaction-toggle{
-    height: 18px;
-    position: absolute;
-    bottom: -20px;
-    right: 0px;
-    padding: 5px;
-    width: 25px;
-    text-align: center;
-    background-image: url(../images/eye.png);
-    background-repeat: no-repeat;
-    background-size: 53%;
-    background-position: center;
-    background-color: #cee3ff;
-    border-radius: 4px;
+    background: url('../images/eye.png') !important;
+    background-size: 100% !important;
+    margin-right:5px !important;
 }
 
 .redaction-toggle.icon-hide{
-    background-image: url(../images/eye-slash.png);
-}
-
-a.redaction-toggle{
-    text-decoration: none;
-    color: #fff;
+    background: url('../images/eye-slash.png') !important;
+    background-size: 100% !important;
 }
 
 .redaction{
