@@ -58,10 +58,10 @@ class AnnotationController extends Controller {
         return View::make('annotation.index')->with($data);
     }
 
-    public function search($id, Request $request) {
+    public function search($pdf_id, Request $request) {
         $q = $request->get('q');
 
-        $query = Annotation::select('annotations.id', 'annotations.page', 'comments.text')
+        $query = Annotation::select('annotations.id', 'annotations.page', 'comments.text')->where('pdf_id', $pdf_id)
             ->join('comments', 'comments.annotation_id', '=', 'annotations.id');
 
         if ($q) {
@@ -98,14 +98,14 @@ class AnnotationController extends Controller {
 
             foreach ($annotation->comments as &$comment) {
 
-                @$comment->created_date = $comment->created_at->format('h:i a, M d, Y');
+                @$comment->created_date = dtFormat($comment->created_at);
                 @$comment->created_by = ['id' => @$comment->user->id, 'name' => @$comment->user->user_full_name];
                 //add the "name" property to the user object
                 @$comment->user->name = @$comment->user->user_full_name;
                 unset($comment->created_at);
                 unset($comment->updated_at);
                 unset($comment->annotation_id);
-                unset($comment->user->username);
+                unset($comment->user);
                 unset($comment->user_id);
 
             }
@@ -147,8 +147,8 @@ class AnnotationController extends Controller {
                         'text' => $d['text'],
                     ]);
 
-                    $comment->created_date = $comment->created_at->format('h:i a, M d, Y');
-                    $comment->created_by = ['id' => $comment->user->id, 'username' => $comment->user->user_full_name];
+                    $comment->created_date = dtFormat($comment->created_at);
+                    $comment->created_by = ['id' => $comment->user->id, 'name' => $comment->user->user_full_name];
                     unset($comment->created_at);
                     unset($comment->updated_at);
                     unset($comment->annotation_id);
@@ -212,8 +212,8 @@ class AnnotationController extends Controller {
                         'text' => $d['text'],
                     ]);
                 }
-                $comment->created_date = $comment->created_at->format('h:i a, M d, Y');
-                $comment->created_by = ['id' => $comment->user->id, 'username' => $comment->user->user_full_name];
+                $comment->created_date = dtFormat($comment->created_at);
+                $comment->created_by = ['id' => $comment->user->id, 'name' => $comment->user->user_full_name];
                 unset($comment->created_at);
                 unset($comment->updated_at);
                 unset($comment->annotation_id);
@@ -247,7 +247,6 @@ class AnnotationController extends Controller {
     }
 
     public function deleteAll($id, Request $request) {
-        Annotation::where('pdf_id', $id)->delete();
         $annotations = $request->get('id');
 
         if ($annotations) {

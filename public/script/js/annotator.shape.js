@@ -40,6 +40,9 @@
          console.log(" annotator.shape.js annotator");
          console.log(annotator);
 
+
+
+
          var enableDragableResizable = function(annotation) {
              console.log('var enableDragableResizable = function(annotation) {');
              if (!annotation.shapes) return;
@@ -59,6 +62,7 @@
              });
          };
 
+
          var disableAnnotation = function() {
              boxEl.boxer({ disabled: true });
          };
@@ -77,7 +81,9 @@
                  $('.annotator-' + annotation.annotationId)
                      .attr('data-annotation-id', annotation.id)
                      .addClass('annotator-' + annotation.id);
-                 enableDragableResizable(annotation)
+                 if (annotation_permission) {
+                     enableDragableResizable(annotation);
+                 }
              }, 200)
          });
 
@@ -86,7 +92,9 @@
              annotations.forEach(function(ann) {
                  if (ann.shapes) {
                      self.annotationLoader(ann);
-                     enableDragableResizable(ann);
+                     if (annotation_permission) {
+                         enableDragableResizable(ann);
+                     }
                  }
              });
          });
@@ -112,6 +120,7 @@
          });
 
          var updateChange = function(e, ele) {
+
              console.log('updateChange');
              var el = $(e.target);
              $(annotator.viewer.element).addClass('annotator-hide');
@@ -138,6 +147,8 @@
 
              boxEl.find('div.annotator-hl').resizable({ disabled: true });
              boxEl.find(e.target).resizable({ disabled: false });
+
+
          };
 
          $(boxEl).on('click', '.annotator-resize-action button.cancel', function() {
@@ -186,6 +197,7 @@
              }
          });
 
+
          $('.annotator-controls').on('click', 'a.annotator-cancel', function() {
              $('.annotator-raw').remove();
              enableAnnotation()
@@ -196,6 +208,7 @@
 
              if (!(annotation_permission)) {
                  $(".annotator-adder").css('display', 'none');
+                 $(".annotator-widget").css('display', 'none');
                  return '';
              }
 
@@ -301,4 +314,5 @@
          }
      };
      return Shape;
+
  })(Annotator.Plugin);

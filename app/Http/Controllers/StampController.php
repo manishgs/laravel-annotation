@@ -17,7 +17,7 @@ class StampController extends Controller {
         foreach ($data as $stamp) {
             $stamp->created_by = ['id' => $stamp->creator->id, 'name' => $stamp->creator->username];
             $stamp->type = DB::table('tbl_stamps_signatures')->select('stamp_type')->where('stamp_id', $stamp->stamp_image_id)->first();
-            $stamp->created_date = $stamp->created_at->format('h:i a, M d, Y');
+            $stamp->created_date = dtFormat($stamp->created_at);
             unset($stamp->creator);
             unset($stamp->created_at);
             unset($stamp->updated_at);
@@ -65,7 +65,7 @@ class StampController extends Controller {
             ];
             $stamp = Stamp::create($stamp);
             $stamp->created_by = ['id' => \Auth::user()->id, 'username' => \Auth::user()->user_full_name];
-            $stamp->created_date = $stamp->created_at->format('h:i a, M d, Y');
+            $stamp->created_date = dtFormat($stamp->created_at);
             unset($stamp->created_at);
             unset($stamp->updated_at);
             unset($stamp->updated_by);

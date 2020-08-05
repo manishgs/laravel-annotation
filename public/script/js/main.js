@@ -228,17 +228,20 @@ function renderStamp(shape, draggable, type) {
     draggable.css({ 'zoom': zoom });
     shape.width = shape.width || defaultWidth;
     shape.height = shape.height || (shape.width * getStampRatio(type));
+
     div.css(shape);
     div.html(draggable);
-    var trash = $('<div class="delete-stamp"><img src="/script/images/trash.svg" /></div>');
-    trash.on('click', function() {
-        var stamp = $(this).parent().data('stamp');
-        $(this).parent().remove();
-        if (stamp) {
-            deleteStamp(stamp);
-        }
-    });
-    div.prepend(trash);
+    if (annotation_permission) {
+        var trash = $('<div class="delete-stamp"><img src="/script/images/trash.svg" /></div>');
+        trash.on('click', function() {
+            var stamp = $(this).parent().data('stamp');
+            $(this).parent().remove();
+            if (stamp) {
+                deleteStamp(stamp);
+            }
+        });
+        div.prepend(trash);
+    }
     updateTextZoom(draggable, shape);
     return div;
 }
@@ -537,7 +540,9 @@ function loadAnnotations() {
                     var div = renderStamp(v.position, stamp, v.stamp_image_id);
                     div.data('stamp', v);
                     content.prepend(div);
-                    stampDraggable(div, v);
+                    if (annotation_permission) {
+                        stampDraggable(div, v);
+                    }
                 });
             }
         });
@@ -612,7 +617,9 @@ function loadAnnotations() {
                 };
                 saveStamp(div, data);
                 setTimeout(() => {
-                    stampDraggable($('.stamp'), data);
+                    if (annotation_permission) {
+                        stampDraggable($('.stamp'), data);
+                    }
                 }, 100);
                 $('.stamp-collection').hide();
             }
