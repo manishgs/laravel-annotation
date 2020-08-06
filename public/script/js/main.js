@@ -22,6 +22,9 @@ var baseurl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split
 //console.log(baseurl);
 /* edited vishnu */
 
+
+console.log("%c js_date_time_format -->" + js_date_time_format, "color:cyan");
+
 function debounce(func, wait, immediate) {
     var timeout;
     return function() {
@@ -40,7 +43,7 @@ function debounce(func, wait, immediate) {
 
 function getDateFormat(timestamp) {
     var date = moment(parseInt(timestamp));
-    return date.format('hh:mm a, MMM D, Y');
+    return date.format(js_date_time_format);
 }
 
 // --------------------------------------------------------------------------------- 
@@ -295,7 +298,7 @@ function getStampRatio(type) {
 
 function getDateFormat(timestamp) {
     var date = moment(parseInt(timestamp));
-    return date.format('hh:mm a, MMM D, Y');
+    return date.format(js_date_time_format);
 }
 
 /* Annotations */
@@ -357,7 +360,7 @@ function deleteAllAnnnotations() {
 
 function deleteSessionAnnotations() {
     if (!createdList.length) {
-        alert('You have not created any annotion.')
+        alert('You have not created any annotation.')
         return;
     }
 
@@ -688,7 +691,7 @@ function fetchAndShowAnnotations() {
             str += '<li id="annotation-' + v.id + '" >' +
                 '<div class="item" data-type="sidebar" data-page="' + v.page + '" data-id="' + v.id + '" data-annotation="' + v.id + '">' +
                 '<p class="text">' +
-                truncate(v.text) +
+                (v.text === null ? '<i>No Comment</i>' : truncate(v.text)) +
                 ' <strong class="page">(page ' + v.page + ')</strong>' +
                 '</p>' +
                 '</div>';
@@ -849,24 +852,6 @@ $(document).on('ready', function() {
     });
 
 
-
-
-
-
-    // delete all annotations
-    $('.deleteAnnotations').on('click', function() {
-        if (confirm('Do you want to remove all annotations?')) {
-            $.ajax({
-                method: "DELETE",
-                url: baseurl + "/annotation/" + PDF.id + "/deleteAll",
-            }).done(function() {
-                $('.annotator-pdf-hl').remove();
-                $('.annotator-hl').each(function() {
-                    $(this).replaceWith($(this).text());
-                })
-            });
-        }
-    })
 
     // show annotations search result when click on input when result is present
     $('#annotationFindInput').on('click', function() {

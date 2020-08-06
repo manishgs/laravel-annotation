@@ -62,7 +62,7 @@ class AnnotationController extends Controller {
         $q = $request->get('q');
 
         $query = Annotation::select('annotations.id', 'annotations.page', 'comments.text')->where('pdf_id', $pdf_id)
-            ->join('comments', 'comments.annotation_id', '=', 'annotations.id');
+            ->leftJoin('comments', 'comments.annotation_id', '=', 'annotations.id');
 
         if ($q) {
             $query->whereRaw('comments.text LIKE "%' . trim($q) . '%"');
@@ -251,8 +251,10 @@ class AnnotationController extends Controller {
 
         if ($annotations) {
             Annotation::where('pdf_id', $id)->whereIn('id', $annotations)->delete();
+            Comment::whereIn('annotation_id', $annotations)->delete();
         } else {
             Annotation::where('pdf_id', $id)->delete();
+            Comment::where('annotation_id', $id)->delete();
         }
         return response()->json(['status' => 'OK']);
     }

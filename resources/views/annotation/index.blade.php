@@ -32,9 +32,11 @@
     var STAMPS_TEXTS = {!!json_encode($stamps_text)!!}
    console.log("BASE_URL-->"+BASE_URL);
    var annotation_permission = "{{module_user_permission_given(7, "annotation") }}";
-   var redaction_permission = "{{module_user_permission_given(7, "redaction") }}";
+
     console.log("%c annotation_permission-->"+annotation_permission,"color:cyan");
-     console.log("%c redaction_permission-->"+redaction_permission,"color:yellow");
+
+    var js_date_time_format = "{{ js_date_time_format() }}";
+
   </script>
   <!-- Latest compiled JavaScript -->
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
