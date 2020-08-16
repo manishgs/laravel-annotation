@@ -279,7 +279,7 @@ function deleteAllAnnnotations() {
 
 function deleteSessionAnnotations() {
     if (!createdList.length) {
-        alert('You have not created any annotion.')
+        alert('You have not created any annotation.')
         return;
     }
 
@@ -578,7 +578,7 @@ function fetchAndShowAnnotations() {
             str += '<li id="annotation-' + v.id + '" >' +
                 '<div class="item" data-type="sidebar" data-page="' + v.page + '" data-id="' + v.id + '" data-annotation="' + v.id + '">' +
                 '<p class="text">' +
-                truncate(v.text) +
+                (v.text === null ? '<i>No Comment</i>' : truncate(v.text)) +
                 ' <strong class="page">(page ' + v.page + ')</strong>' +
                 '</p>' +
                 '</div>' +
