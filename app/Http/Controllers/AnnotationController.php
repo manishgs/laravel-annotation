@@ -253,8 +253,8 @@ class AnnotationController extends Controller {
             Annotation::where('pdf_id', $id)->whereIn('id', $annotations)->delete();
             Comment::whereIn('annotation_id', $annotations)->delete();
         } else {
+            Comment::whereIn('annotation_id', Annotation::where('pdf_id', $id)->lists('id')->toArray())->delete();
             Annotation::where('pdf_id', $id)->delete();
-            Comment::where('annotation_id', $id)->delete();
         }
         return response()->json(['status' => 'OK']);
     }
